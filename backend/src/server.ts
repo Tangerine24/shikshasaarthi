@@ -71,10 +71,10 @@ app.use('/api/verification', verificationRoutes);
 app.use('/api/student/eligibility-roadmap', roadmapRoutes);
 app.use('/api/roadmap', roadmapRoutes);
 
-app.get('/api/health', (_req, res) => {
+app.get('/api/health', (_req: express.Request, res: express.Response) => {
   res.json({ status: 'ok', timestamp: new Date(), version: '2.1.0' });
 });
-app.get('/api/v1/health', (_req, res) => {
+app.get('/api/v1/health', (_req: express.Request, res: express.Response) => {
   res.json({ status: 'ok', timestamp: new Date(), version: '2.1.0' });
 });
 
@@ -82,7 +82,7 @@ app.get('/api/v1/health', (_req, res) => {
 const frontendDist = path.resolve(__dirname, '../../frontend/dist');
 if (fs.existsSync(frontendDist)) {
   app.use(express.static(frontendDist));
-  app.get('*', (req, res, next) => {
+  app.get('*', (req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
       return next();
     }

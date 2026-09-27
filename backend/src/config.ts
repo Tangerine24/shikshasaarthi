@@ -18,5 +18,5 @@ export const config = {
   uploadDir: process.env.UPLOAD_DIR ?? './uploads',
   jagoApiKey: process.env.JAGO_API_KEY ?? '',
   jagoModel: process.env.JAGO_MODEL ?? 'gemini-2.0-flash',
-  corsOrigin: process.env.CORS_ORIGIN === '*' ? '*' : (process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',').map(s => s.trim()) : 'http://localhost:5173'),
+  corsOrigin: process.env.CORS_ORIGIN === '*' ? '*' : (process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',').map((s: string) => s.trim()) : 'http://localhost:5173'),
 };
