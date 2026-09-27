@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  shikshasaarthi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shikshasaarthi_app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - DATABASE_URL=file:./dev.db
+      - JWT_SECRET=shikshasaarthi_secret_jwt_production_2026
+      - JWT_REFRESH_SECRET=shikshasaarthi_secret_refresh_jwt_2026
+      - CORS_ORIGIN=*
+    volumes:
+      - sqlite_data:/app/backend/prisma
+      - uploads_data:/app/backend/uploads
+
+volumes:
+  sqlite_data:
+  uploads_data:

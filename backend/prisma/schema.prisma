@@ -1,0 +1,368 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite does not support native enums; types are represented as Strings and validated via Zod/TypeScript types.
+
+model User {
+  id                String   @id @default(uuid())
+  email             String   @unique
+  passwordHash      String
+  role              String   // STUDENT, PROVIDER, MOTA_ADMIN
+  preferredLanguage String   @default("EN")
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  studentProfile    StudentProfile?
+  providerProfile   ProviderProfile?
+  adminProfile      AdminProfile?
+  notifications     Notification[]
+  auditLogs         AuditLog[]
+  jagoConversations JagoConversation[]
+  refreshTokens     RefreshToken[]
+  consentRecords    ConsentRecord[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model ConsentRecord {
+  id             String    @id @default(uuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purpose        String    // "eligibility_check", "jago_context", "ministry_analytics"
+  consentVersion String    @default("v1.0")
+  scope          String?   // description of data covered
+  grantedAt      DateTime  @default(now())
+  revokedAt      DateTime?
+}
+
+model Institution {
+  id         String   @id @default(uuid())
+  aisheCode  String   @unique
+  name       String
+  type       String   // Central University, State University, Autonomous College, Polytechnic
+  state      String
+  district   String
+  isVerified Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  studentProfiles  StudentProfile[]
+  providerProfiles ProviderProfile[]
+}
+
+model StateDistrictReference {
+  id           String @id @default(uuid())
+  stateName    String
+  districtName String
+  stateCode    String
+  districtCode String
+
+  @@unique([stateCode, districtCode])
+}
+
+model ApplicationCycle {
+  id           String        @id @default(uuid())
+  academicYear String        @unique // e.g. "AY 2025-26"
+  startDate    DateTime
+  endDate      DateTime
+  isActive     Boolean       @default(true)
+  status       String        @default("ACTIVE") // UPCOMING, ACTIVE, CLOSED
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  scholarships Scholarship[]
+  applications Application[]
+}
+
+model StudentProfile {
+  id                    String       @id @default(uuid())
+  userId                String       @unique
+  user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName              String
+  dateOfBirth           DateTime?
+  gender                String?      // MALE, FEMALE, OTHER
+  state                 String?
+  district              String?
+  category              String?      // ST, SC, OBC, GENERAL (SENSITIVE)
+  annualFamilyIncome    Float?       // (SENSITIVE)
+  educationLevel        String?      // UG, PG, DIPLOMA, etc.
+  institution           String?      // string label
+  institutionId         String?
+  enrolledInstitution   Institution? @relation(fields: [institutionId], references: [id])
+  course                String?
+  yearOfStudy           Int?
+  academicPercentage    Float?
+  isHosteller           Boolean?
+  hasDisability         Boolean?     // (SENSITIVE)
+  hasBankAccount        Boolean?
+  previousScholarship   String?      // brief text
+  profileCompletePercent Int         @default(0)
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+
+  documents    StudentDocument[]
+  applications Application[]
+}
+
+model ProviderProfile {
+  id                 String       @id @default(uuid())
+  userId             String       @unique
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationName   String
+  organizationType   String?      // NGO, Government, University
+  institutionId      String?
+  institutionRef     Institution? @relation(fields: [institutionId], references: [id])
+  contactPerson      String?
+  phone              String?
+  website            String?
+  verificationStatus String       @default("PENDING")
+  verifiedAt         DateTime?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  scholarships Scholarship[]
+}
+
+model AdminProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName  String
+  createdAt DateTime @default(now())
+}
+
+model Scholarship {
+  id                    String           @id @default(uuid())
+  providerId            String
+  provider              ProviderProfile  @relation(fields: [providerId], references: [id])
+  cycleId               String?
+  cycle                 ApplicationCycle? @relation(fields: [cycleId], references: [id])
+  title                 String
+  description           String
+  benefit               Float            // Annual amount in INR
+  benefitDescription    String?
+  deadline              DateTime
+  status                String           @default("DRAFT")
+  targetGroup           String?          // e.g., "ST students in Jharkhand"
+  applicationProcess    String?          // plain-language description
+  isDemo                Boolean          @default(false)
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  eligibilityRules     EligibilityRule[]
+  documentRequirements ScholarshipDocumentRequirement[]
+  applications         Application[]
+}
+
+model EligibilityRule {
+  id            String      @id @default(uuid())
+  scholarshipId String
+  scholarship   Scholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
+  field         String      // e.g., "category", "state", "income", "academicPercentage"
+  operator      String      // "EQ", "IN", "LTE", "GTE", "LT", "GT"
+  value         String      // JSON-serialized value
+  description   String      // human-readable description
+  isRequired    Boolean     @default(true)
+}
+
+model ScholarshipDocumentRequirement {
+  id            String      @id @default(uuid())
+  scholarshipId String
+  scholarship   Scholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
+  documentType  String
+  description   String?
+  isRequired    Boolean     @default(true)
+}
+
+model StudentDocument {
+  id                  String                @id @default(uuid())
+  studentId           String
+  student             StudentProfile        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  documentType        String
+  fileName            String
+  originalName        String
+  storagePath         String
+  mimeType            String
+  fileSize            Int
+  verificationState   String                @default("UPLOADED")
+  expiryDate          DateTime?
+  notes               String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  applicationDocuments ApplicationDocument[]
+}
+
+model Application {
+  id              String            @id @default(uuid())
+  studentId       String
+  student         StudentProfile    @relation(fields: [studentId], references: [id])
+  scholarshipId   String
+  scholarship     Scholarship       @relation(fields: [scholarshipId], references: [id])
+  cycleId         String?
+  cycle           ApplicationCycle? @relation(fields: [cycleId], references: [id])
+  status          String            @default("DRAFT")
+  submittedAt     DateTime?
+  correctionNote  String?           // note from provider when requesting correction
+  rejectionReason String?           // reason if rejected
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  statusHistory        ApplicationStatusHistory[]
+  applicationDocuments ApplicationDocument[]
+  verificationRequests VerificationRequest[]
+  exceptionCases       ExceptionCase[]
+  paymentEvents        PaymentEvent[]
+
+  @@unique([studentId, scholarshipId])
+}
+
+model ApplicationStatusHistory {
+  id            String            @id @default(uuid())
+  applicationId String
+  application   Application       @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  fromStatus    String?
+  toStatus      String
+  actorId       String?           // userId of who made the change
+  note          String?
+  createdAt     DateTime          @default(now())
+}
+
+model ApplicationDocument {
+  id             String          @id @default(uuid())
+  applicationId  String
+  application    Application     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  documentId     String
+  document       StudentDocument @relation(fields: [documentId], references: [id])
+  createdAt      DateTime        @default(now())
+}
+
+model VerificationRequest {
+  id               String               @id @default(uuid())
+  applicationId    String
+  application      Application          @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  documentId       String?
+  verificationType String               // IDENTITY, ST_CERTIFICATE, INCOME, ACADEMIC, INSTITUTION
+  source           String               // DIGILOCKER, AISHE, STATE_EDISTRICT, MOCK_GATEWAY
+  status           String               @default("PENDING") // PENDING, VERIFIED, FAILED, MISMATCH, SOURCE_UNAVAILABLE
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  results        VerificationResult[]
+  exceptionCases ExceptionCase[]
+}
+
+model VerificationResult {
+  id                    String              @id @default(uuid())
+  verificationRequestId String
+  verificationRequest   VerificationRequest @relation(fields: [verificationRequestId], references: [id], onDelete: Cascade)
+  status                String              // VERIFIED, FAILED, MISMATCH
+  confidenceScore       Float?              @default(1.0)
+  mismatchDetails       String?             // JSON or string
+  rawResponse           String?             // JSON
+  checkedAt             DateTime            @default(now())
+}
+
+model ExceptionCase {
+  id                    String               @id @default(uuid())
+  applicationId         String
+  application           Application          @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  verificationRequestId String?
+  verificationRequest   VerificationRequest? @relation(fields: [verificationRequestId], references: [id])
+  issueType             String               // NAME_MISMATCH, EXPIRED_DOCUMENT, INSTITUTION_MISMATCH, CERTIFICATE_DUPLICATE
+  title                 String
+  details               String
+  severity              String               @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  status                String               @default("OPEN")   // OPEN, UNDER_REVIEW, RESOLVED, REJECTED
+  resolutionNote        String?
+  resolvedAt            DateTime?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+}
+
+model PaymentEvent {
+  id             String      @id @default(uuid())
+  applicationId  String
+  application    Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  amount         Float
+  dbtStatus      String      // APPROVED, SANCTIONED, PAYMENT_INITIATED, BANK_VALIDATION, DBT_PROCESSING, PAID, FAILED
+  transactionRef String?
+  failureReason  String?
+  eventDate      DateTime    @default(now())
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model RiskSignal {
+  id                String   @id @default(uuid())
+  entityType        String   // Application, StudentDocument, PaymentEvent
+  entityId          String
+  riskType          String   // IDENTITY_MISMATCH, EXPIRING_DOCUMENT, VERIFICATION_DELAY, PAYMENT_VALIDATION_ISSUE
+  severity          String   @default("MEDIUM") // LOW, MEDIUM, HIGH
+  reason            String
+  evidence          String?
+  status            String   @default("ACTIVE") // ACTIVE, INVESTIGATING, RESOLVED, DISMISSED
+  recommendedAction String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  body      String
+  isRead    Boolean          @default(false)
+  metadata  String?          // JSON for extra data (applicationId, scholarshipId, etc.)
+  createdAt DateTime         @default(now())
+}
+
+model AuditLog {
+  id                     String   @id @default(uuid())
+  actorId                String?
+  actor                  User?    @relation(fields: [actorId], references: [id])
+  action                 String   // e.g., "READ_SENSITIVE_FIELD", "STATUS_CHANGE"
+  entityType             String   // e.g., "StudentProfile", "Application"
+  entityId               String
+  sensitiveFieldAccessed String?  // e.g., "category", "annualFamilyIncome"
+  metadata               String?  // JSON
+  ipAddress              String?
+  requestId              String?
+  createdAt              DateTime @default(now())
+}
+
+model JagoConversation {
+  id        String        @id @default(uuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String?       // auto-generated from first message
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  messages JagoMessage[]
+}
+
+model JagoMessage {
+  id             String           @id @default(uuid())
+  conversationId String
+  conversation   JagoConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String           // "user" | "assistant" | "tool"
+  content        String
+  toolName       String?          // if role=tool
+  createdAt      DateTime         @default(now())
+}

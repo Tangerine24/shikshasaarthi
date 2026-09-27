@@ -1,0 +1,22 @@
+services:
+  # Unified Fullstack Service (Frontend UI + Backend API on single free URL)
+  - type: web
+    name: shikshasaarthi
+    env: node
+    plan: free
+    region: singapore
+    buildCommand: "npm run install:all && npm run build && cd backend && npx prisma generate"
+    startCommand: "cd backend && node dist/server.js"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        value: file:./dev.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: "*"
