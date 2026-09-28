@@ -419,9 +419,115 @@ export const AppShell: React.FC<Props> = ({ children }) => {
         )}
 
         {/* Page Body */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8">
           <div className="max-w-6xl mx-auto">{children}</div>
         </main>
+
+        {/* Mobile Native Bottom Navigation Bar */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-surface/95 backdrop-blur-md border-t border-border z-30 px-2 py-1.5 flex items-center justify-around shadow-lg pb-[max(env(safe-area-inset-bottom),0.5rem)]">
+          {user?.role === 'STUDENT' ? (
+            <>
+              <Link
+                to="/student/dashboard"
+                className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg transition text-[11px] font-medium ${
+                  location.pathname === '/student/dashboard'
+                    ? 'text-primary font-bold'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <LayoutDashboard className="w-5 h-5 mb-0.5" />
+                <span>Home</span>
+              </Link>
+
+              <Link
+                to="/student/scholarships"
+                className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg transition text-[11px] font-medium ${
+                  location.pathname.startsWith('/student/scholarships')
+                    ? 'text-primary font-bold'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <GraduationCap className="w-5 h-5 mb-0.5" />
+                <span>Schemes</span>
+              </Link>
+
+              {/* JAGO AI featured center button */}
+              <Link
+                to="/student/jago"
+                className={`flex flex-col items-center justify-center -mt-4 py-1.5 px-3 rounded-full transition shadow-md ${
+                  location.pathname.startsWith('/student/jago')
+                    ? 'bg-primary text-surface ring-4 ring-primary/20 scale-105'
+                    : 'bg-primary-dark text-surface hover:bg-primary'
+                }`}
+              >
+                <MessageSquareHeart className="w-5 h-5" />
+                <span className="text-[10px] font-bold mt-0.5">JAGO AI</span>
+              </Link>
+
+              <Link
+                to="/student/documents"
+                className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg transition text-[11px] font-medium ${
+                  location.pathname.startsWith('/student/documents')
+                    ? 'text-primary font-bold'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <FolderOpen className="w-5 h-5 mb-0.5" />
+                <span>Wallet</span>
+              </Link>
+
+              <Link
+                to="/student/profile"
+                className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg transition text-[11px] font-medium ${
+                  location.pathname.startsWith('/student/profile')
+                    ? 'text-primary font-bold'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <UserCheck className="w-5 h-5 mb-0.5" />
+                <span>Profile</span>
+              </Link>
+            </>
+          ) : user?.role === 'PROVIDER' ? (
+            <>
+              <Link
+                to="/provider/dashboard"
+                className={`flex flex-col items-center justify-center py-1 px-3 text-[11px] ${
+                  location.pathname === '/provider/dashboard' ? 'text-primary font-bold' : 'text-text-muted'
+                }`}
+              >
+                <LayoutDashboard className="w-5 h-5 mb-0.5" />
+                <span>Overview</span>
+              </Link>
+              <Link
+                to="/provider/scholarships"
+                className={`flex flex-col items-center justify-center py-1 px-3 text-[11px] ${
+                  location.pathname.startsWith('/provider/scholarships') ? 'text-primary font-bold' : 'text-text-muted'
+                }`}
+              >
+                <GraduationCap className="w-5 h-5 mb-0.5" />
+                <span>Schemes</span>
+              </Link>
+              <Link
+                to="/provider/applications"
+                className={`flex flex-col items-center justify-center py-1 px-3 text-[11px] ${
+                  location.pathname.startsWith('/provider/applications') ? 'text-primary font-bold' : 'text-text-muted'
+                }`}
+              >
+                <FileCheck2 className="w-5 h-5 mb-0.5" />
+                <span>Review</span>
+              </Link>
+            </>
+          ) : (
+            <Link
+              to="/admin/dashboard"
+              className="flex flex-col items-center justify-center py-1 px-3 text-xs text-primary font-bold"
+            >
+              <Shield className="w-5 h-5 mb-0.5" />
+              <span>Admin</span>
+            </Link>
+          )}
+        </nav>
       </div>
     </div>
   );
