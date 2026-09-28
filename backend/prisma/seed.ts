@@ -152,21 +152,21 @@ async function main() {
       fullName: 'Ramesh Kumar',
       dateOfBirth: new Date('2004-07-15'),
       gender: 'MALE',
-      state: 'Karnataka',
-      district: 'Bengaluru Urban',
+      state: 'Jharkhand',
+      district: 'Ranchi',
       category: 'ST', // Explicit Scheduled Tribe category
       annualFamilyIncome: 150000,
       educationLevel: 'UG',
-      institution: 'National Institute of Technology Karnataka (NITK), Surathkal',
-      institutionId: nitkSurathkal.id,
+      institution: 'Birla Institute of Technology, Mesra',
+      institutionId: bitMesra.id,
       course: 'B.Tech Computer Science & Engineering',
-      yearOfStudy: 2,
+      yearOfStudy: 4, // Semester 4 (2nd Year)
       academicPercentage: 78.5,
       isHosteller: true,
       hasDisability: false,
       hasBankAccount: true,
-      previousScholarship: 'Pre-Matric Tribal Scholarship (Karnataka)',
-      profileCompletePercent: 96,
+      previousScholarship: 'Pre-Matric Tribal Scholarship (Jharkhand)',
+      profileCompletePercent: 86,
     },
   });
 
@@ -245,13 +245,13 @@ async function main() {
       benefitDescription: '₹50,000 per academic year (direct benefit transfer to Aadhaar-seeded bank account)',
       deadline: new Date(Date.now() + 90 * 86400000),
       status: 'PUBLISHED',
-      targetGroup: 'ST undergraduate engineering & professional students in Karnataka and across India',
+      targetGroup: 'ST undergraduate engineering & professional students in Jharkhand and across India',
       applicationProcess: '1. Complete student profile. 2. Verify ST & Income certificates. 3. Submit application online. 4. Institution verifies enrollment.',
       isDemo: true,
       eligibilityRules: {
         create: [
           { field: 'category', operator: 'IN', value: '["ST"]', description: 'Belong to Scheduled Tribe (ST) category', isRequired: true },
-          { field: 'state', operator: 'IN', value: '["Karnataka", "Jharkhand", "All India"]', description: 'Domicile of Karnataka or Jharkhand', isRequired: false },
+          { field: 'state', operator: 'IN', value: '["Jharkhand", "All India"]', description: 'Domicile of Jharkhand state or All India', isRequired: false },
           { field: 'annualFamilyIncome', operator: 'LTE', value: '250000', description: 'Annual family income not exceeding ₹2,50,000', isRequired: true },
           { field: 'educationLevel', operator: 'EQ', value: '"UG"', description: 'Enrolled in an Undergraduate degree programme', isRequired: true },
           { field: 'academicPercentage', operator: 'GTE', value: '60', description: 'Minimum 60% marks in previous examination', isRequired: true },
@@ -533,14 +533,14 @@ async function main() {
     data: {
       studentId: studentProfile.id,
       documentType: 'COMMUNITY_CERTIFICATE',
-      fileName: 'st_caste_certificate_ramesh_karnataka.pdf',
-      originalName: 'ST_Certificate_Naikda_Tahsildar_Bengaluru.pdf',
+      fileName: 'st_caste_certificate_ramesh_santhal.pdf',
+      originalName: 'ST_Certificate_Santhal_SDO_Ranchi.pdf',
       storagePath: 'uploads/demo/st_caste_certificate_ramesh.pdf',
       mimeType: 'application/pdf',
       fileSize: 420500,
       verificationState: 'VERIFIED',
       expiryDate: new Date('2035-12-31'),
-      notes: 'Scheduled Tribe (Naikda/ST) verified against Karnataka State ST Welfare Registry',
+      notes: 'Scheduled Tribe (Santhal) verified against Jharkhand State ST Registry',
     },
   });
 
@@ -549,13 +549,13 @@ async function main() {
       studentId: studentProfile.id,
       documentType: 'INCOME_CERTIFICATE',
       fileName: 'income_certificate_2025_26.pdf',
-      originalName: 'Income_Certificate_Tahsildar_Bengaluru_2025.pdf',
+      originalName: 'Income_Certificate_CO_Kanke_2025.pdf',
       storagePath: 'uploads/demo/income_certificate_2025_26.pdf',
       mimeType: 'application/pdf',
       fileSize: 310200,
       verificationState: 'VERIFIED',
       expiryDate: new Date(Date.now() + 18 * 86400000), // 18 days left (Triggers Document Health warning)
-      notes: 'Family income verified at ₹1,50,000/yr by Revenue Authority.',
+      notes: 'Family income verified at ₹1,50,000/yr by Circle Officer, Kanke.',
     },
   });
 
@@ -564,12 +564,12 @@ async function main() {
       studentId: studentProfile.id,
       documentType: 'MARKSHEET',
       fileName: 'btech_cse_sem2_marksheet.pdf',
-      originalName: 'NITK_Surathkal_BTech_CSE_Sem2_Transcript.pdf',
+      originalName: 'BIT_Mesra_BTech_CSE_Sem2_Transcript.pdf',
       storagePath: 'uploads/demo/btech_sem2_marksheet.pdf',
       mimeType: 'application/pdf',
       fileSize: 680400,
       verificationState: 'VERIFIED',
-      notes: 'Cumulative CGPA 7.85 / 78.5% verified by Examination Controller, NITK Surathkal',
+      notes: 'Cumulative CGPA 7.85 / 78.5% verified by Examination Controller, BIT Mesra',
     },
   });
 
@@ -577,13 +577,13 @@ async function main() {
     data: {
       studentId: studentProfile.id,
       documentType: 'BONAFIDE_CERTIFICATE',
-      fileName: 'nitk_surathkal_bonafide_2025_26.pdf',
-      originalName: 'NITK_Surathkal_Bonafide_Roll_24BTECH089.pdf',
-      storagePath: 'uploads/demo/nitk_surathkal_bonafide.pdf',
+      fileName: 'bit_mesra_bonafide_2025_26.pdf',
+      originalName: 'BIT_Mesra_Bonafide_Roll_24BTECH089.pdf',
+      storagePath: 'uploads/demo/bit_mesra_bonafide.pdf',
       mimeType: 'application/pdf',
       fileSize: 345000,
-      verificationState: 'VERIFIED',
-      notes: 'Bonafide 2nd Year UG Student, NITK Surathkal (AISHE: U-0214)',
+      verificationState: 'UNDER_VERIFICATION', // PENDING VERIFICATION (Matches 86% profile completion & 1 pending document in wallet)
+      notes: 'Bonafide 2nd Year UG Student (AISHE: U-0239) - Verification in review by Institutional Nodal Officer, BIT Mesra',
     },
   });
 
@@ -638,7 +638,7 @@ async function main() {
             fromStatus: 'SUBMITTED',
             toStatus: 'UNDER_VERIFICATION',
             actorId: providerUser.id,
-            note: 'Under institutional review by NITK Surathkal Nodal Officer',
+            note: 'Under institutional review by BIT Mesra Nodal Officer',
             createdAt: new Date(Date.now() - 2 * 86400000),
           },
         ],
@@ -695,11 +695,11 @@ async function main() {
     },
   });
 
-  // Application 3: sKarnataka (Karnataka State Post-Matric) -> Status: SUBMITTED
+  // Application 3: s7 (E-Kalyan Jharkhand Post-Matric) -> Status: SUBMITTED
   const app3 = await prisma.application.create({
     data: {
       studentId: studentProfile.id,
-      scholarshipId: sKarnataka.id,
+      scholarshipId: s7.id,
       cycleId: activeCycle.id,
       status: 'SUBMITTED',
       submittedAt: new Date(Date.now() - 1 * 86400000),
@@ -715,7 +715,7 @@ async function main() {
           {
             toStatus: 'DRAFT',
             actorId: studentUser.id,
-            note: 'Draft initiated on Karnataka State Scholarship Portal (SSP)',
+            note: 'Draft initiated on E-Kalyan Jharkhand Portal',
             createdAt: new Date(Date.now() - 2 * 86400000),
           },
           {
@@ -761,7 +761,7 @@ async function main() {
       verificationRequestId: verifReq.id,
       issueType: 'NAME_MISMATCH',
       title: 'DigiLocker ST Identity Discrepancy',
-      details: 'DigiLocker returned name as "Ramesh K" while application record shows "Ramesh Kumar". Requires nodal verification or institutional roll sheet confirmation.',
+      details: 'DigiLocker returned name as "Ramesh K" while application record shows "Ramesh Kumar". Requires nodal verification or institutional roll sheet confirmation from BIT Mesra.',
       severity: 'MEDIUM',
       status: 'OPEN',
     },
@@ -774,7 +774,7 @@ async function main() {
       applicationId: app1.id,
       amount: 50000,
       dbtStatus: 'DBT_PROCESSING',
-      transactionRef: 'PFMS-2026-KA-883921',
+      transactionRef: 'PFMS-2026-JH-883921',
       failureReason: null,
       eventDate: new Date(Date.now() - 1 * 86400000),
     },
@@ -786,7 +786,7 @@ async function main() {
       applicationId: app2.id,
       amount: 30000,
       dbtStatus: 'PAID',
-      transactionRef: 'PFMS-2025-KA-774910',
+      transactionRef: 'PFMS-2025-JH-774910',
       failureReason: null,
       eventDate: new Date(Date.now() - 25 * 86400000),
     },
@@ -800,9 +800,9 @@ async function main() {
       riskType: 'IDENTITY_MISMATCH',
       severity: 'MEDIUM',
       reason: 'Name nuance detected between DigiLocker credential ("Ramesh K") and student profile ("Ramesh Kumar").',
-      evidence: 'DigiLocker Certificate Record ID: DL-ST-2022-99812 (Naikda Tribe, Bengaluru)',
+      evidence: 'DigiLocker Certificate Record ID: DL-ST-2022-99812 (Santhal Tribe, Ranchi)',
       status: 'ACTIVE',
-      recommendedAction: 'Verify institutional roll sheet from NITK Surathkal.',
+      recommendedAction: 'Verify institutional roll sheet from BIT Mesra.',
     },
   });
 
@@ -813,7 +813,7 @@ async function main() {
         userId: studentUser.id,
         type: 'PAYMENT_UPDATE',
         title: 'DBT Payment Disbursed / छात्रवृत्ति राशि प्राप्त',
-        body: '₹30,000 has been successfully credited to your SBI account ending in 4108 for ST Undergraduate Academic Assistance Scheme (Ref: PFMS-2025-KA-774910).',
+        body: '₹30,000 has been successfully credited to your SBI account ending in 4108 for ST Undergraduate Academic Assistance Scheme (Ref: PFMS-2025-JH-774910).',
         isRead: false,
         metadata: JSON.stringify({ applicationId: app2.id, amount: 30000 }),
         createdAt: new Date(Date.now() - 25 * 86400000),
@@ -822,7 +822,7 @@ async function main() {
         userId: studentUser.id,
         type: 'VERIFICATION_UPDATE',
         title: 'Application Under Verification',
-        body: 'Your application for Tribal Higher Education Support Scholarship is under active review by NITK Surathkal Nodal Officer.',
+        body: 'Your application for Tribal Higher Education Support Scholarship is under active review by BIT Mesra Nodal Officer.',
         isRead: false,
         metadata: JSON.stringify({ applicationId: app1.id }),
         createdAt: new Date(Date.now() - 2 * 86400000),
@@ -831,7 +831,7 @@ async function main() {
         userId: studentUser.id,
         type: 'DOCUMENT_EXPIRING',
         title: 'Document Expiry Alert / दस्तावेज़ नवीनीकरण',
-        body: 'Your Income Certificate expires in 18 days. Please renew with Tahsildar to ensure uninterrupted DBT disbursements.',
+        body: 'Your Income Certificate expires in 18 days. Please renew with Circle Officer to ensure uninterrupted DBT disbursements.',
         isRead: false,
         metadata: JSON.stringify({ documentId: docIncome.id, daysLeft: 18 }),
         createdAt: new Date(Date.now() - 1 * 86400000),
@@ -840,9 +840,9 @@ async function main() {
         userId: studentUser.id,
         type: 'SCHOLARSHIP_MATCH',
         title: 'New 100% Eligible Scheme Found!',
-        body: 'You are 100% eligible for Karnataka State Post-Matric Scholarship (₹45,000/year). Check your Eligibility Roadmap now.',
+        body: 'You are 100% eligible for Birsa Munda Technical Education Fellowship (₹65,000/year). Check your Eligibility Roadmap now.',
         isRead: false,
-        metadata: JSON.stringify({ scholarshipId: sKarnataka.id }),
+        metadata: JSON.stringify({ scholarshipId: s6.id }),
         createdAt: new Date(),
       },
     ],
@@ -852,7 +852,7 @@ async function main() {
   console.log('----------------------------------------------------');
   console.log('DEMO CREDENTIALS:');
   console.log('  Student : student@demo.shikshasaarthi.in  / Demo@1234');
-  console.log('            (Ramesh Kumar, ST - Karnataka, NITK Surathkal)');
+  console.log('            (Ramesh Kumar, ST - Santhal, Jharkhand, BIT Mesra)');
   console.log('  Provider: provider@demo.shikshasaarthi.in / Demo@1234');
   console.log('            (Ministry of Tribal Affairs)');
   console.log('  Admin   : admin@demo.shikshasaarthi.in    / Demo@1234');

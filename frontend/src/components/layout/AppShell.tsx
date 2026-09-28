@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 import { notificationApi, studentApi } from '../../api';
 import { StudentProfile } from '../../types';
+import { WhatsAppAvatar } from '../ui/WhatsAppAvatar';
 import {
   LayoutDashboard,
   GraduationCap,
@@ -41,9 +42,6 @@ export const AppShell: React.FC<Props> = ({ children }) => {
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [profilePopoverOpen, setProfilePopoverOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
-
-  const studentPhotoUrl =
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80';
 
   useEffect(() => {
     if (user?.role === 'STUDENT') {
@@ -135,8 +133,8 @@ export const AppShell: React.FC<Props> = ({ children }) => {
       : studentNav;
 
   const displayName = profile?.fullName || (user?.email?.split('@')[0] ? 'Ramesh Kumar' : 'Student');
-  const userInstitution = profile?.institution || 'National Institute of Technology Karnataka (NITK), Surathkal';
-  const userState = profile?.state || 'Karnataka';
+  const userInstitution = profile?.institution || 'Birla Institute of Technology, Mesra';
+  const userState = profile?.state || 'Jharkhand';
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -194,14 +192,7 @@ export const AppShell: React.FC<Props> = ({ children }) => {
             title="Click to view profile details"
           >
             <div className="relative shrink-0">
-              <img
-                src={studentPhotoUrl}
-                alt="User Profile"
-                className="w-9 h-9 rounded-full object-cover border border-primary/20"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = 'none';
-                }}
-              />
+              <WhatsAppAvatar size="sm" />
               <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-surface" />
             </div>
 
@@ -250,14 +241,7 @@ export const AppShell: React.FC<Props> = ({ children }) => {
               title="Click to view profile details"
             >
               <div className="relative shrink-0">
-                <img
-                  src={studentPhotoUrl}
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full object-cover border border-primary/30"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = 'none';
-                  }}
-                />
+                <WhatsAppAvatar size="sm" />
                 <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-500 rounded-full border border-surface" />
               </div>
               <div className="hidden sm:block">
@@ -301,18 +285,10 @@ export const AppShell: React.FC<Props> = ({ children }) => {
               <button
                 type="button"
                 onClick={() => setProfilePopoverOpen(!profilePopoverOpen)}
-                className="w-8 h-8 rounded-full overflow-hidden border border-primary/30 hover:ring-2 hover:ring-primary/20 transition flex items-center justify-center bg-primary/10"
+                className="rounded-full hover:ring-2 hover:ring-primary/20 transition flex items-center justify-center"
                 title="View Profile Details"
               >
-                <img
-                  src={studentPhotoUrl}
-                  alt="Student Avatar"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = 'none';
-                  }}
-                />
-                <User className="w-4 h-4 text-primary" />
+                <WhatsAppAvatar size="sm" />
               </button>
             </div>
           </div>
@@ -328,14 +304,7 @@ export const AppShell: React.FC<Props> = ({ children }) => {
             <div className="flex items-start justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-3">
                 <div className="relative shrink-0">
-                  <img
-                    src={studentPhotoUrl}
-                    alt={displayName}
-                    className="w-12 h-12 rounded-full object-cover border-2 border-primary/20 shadow-xs"
-                    onError={(e) => {
-                      (e.target as HTMLElement).style.display = 'none';
-                    }}
-                  />
+                  <WhatsAppAvatar size="md" />
                   <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-surface" />
                 </div>
                 <div className="min-w-0">
@@ -367,7 +336,7 @@ export const AppShell: React.FC<Props> = ({ children }) => {
                 <div className="flex items-center gap-1.5 text-text-muted text-[11px]">
                   <GraduationCap className="w-3.5 h-3.5 text-text-muted shrink-0" />
                   <span className="truncate">
-                    {profile?.course || 'B.Tech Computer Science'} • {profile?.yearOfStudy ? `${profile.yearOfStudy}nd Year` : '2nd Year'}
+                    {profile?.course || 'B.Tech Computer Science & Engineering'} • {profile?.yearOfStudy ? `Semester ${profile.yearOfStudy} (2nd Year)` : 'Semester 4 (2nd Year)'}
                   </span>
                 </div>
               </div>

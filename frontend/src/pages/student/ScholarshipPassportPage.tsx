@@ -47,11 +47,11 @@ export const ScholarshipPassportPage: React.FC = () => {
   const student = data?.profile || {
     fullName: 'Ramesh Kumar',
     category: 'ST',
-    state: 'Karnataka',
-    institution: 'National Institute of Technology Karnataka (NITK), Surathkal',
+    state: 'Jharkhand',
+    institution: 'Birla Institute of Technology, Mesra',
     academicPercentage: 78.5,
     course: 'B.Tech Computer Science & Engineering',
-    yearOfStudy: '2nd Year',
+    yearOfStudy: 'Semester 4 (2nd Year)',
   };
 
   const documents = data?.documents || [];

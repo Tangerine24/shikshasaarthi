@@ -34,7 +34,7 @@ export const StateEDistrictAdapter: VerificationAdapter = {
         dataPayload: {
           annualFamilyIncome: studentDetails.annualFamilyIncome || 150000,
           issuedTo: `Parent / Guardian of ${studentDetails.fullName}`,
-          issuingAuthority: `Tehsildar / Revenue Circle Officer, ${studentDetails.district || 'Bengaluru Urban'}`,
+          issuingAuthority: `Tehsildar / Revenue Circle Officer, ${studentDetails.district || 'Ranchi'}`,
           issuanceDate: '2024-04-10',
           expiryDate: '2025-03-31',
         },
@@ -51,8 +51,8 @@ export const StateEDistrictAdapter: VerificationAdapter = {
         verifiedAt: new Date().toISOString(),
         certificateNumber: `${stateCode}/DOM/2022/${Math.floor(10000 + Math.random() * 90000)}`,
         dataPayload: {
-          state: studentDetails.state || 'Karnataka',
-          district: studentDetails.district || 'Bengaluru Urban',
+          state: studentDetails.state || 'Jharkhand',
+          district: studentDetails.district || 'Ranchi',
           residenceYears: 'Permanent Resident (Over 15 Years)',
           applicantNameOnCertificate: `${studentDetails.fullName?.split(' ')[0]} Soren`,
         },
