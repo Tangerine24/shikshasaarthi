@@ -18,7 +18,7 @@ import ApplicationsPage from '../pages/student/ApplicationsPage';
 import ApplicationDetailPage from '../pages/student/ApplicationDetailPage';
 import JAGOPage from '../pages/student/JAGOPage';
 import NotificationsPage from '../pages/student/NotificationsPage';
-import ScholarshipPassportPage from '../pages/student/ScholarshipPassportPage';
+import VerificationCenterPage from '../pages/student/VerificationCenterPage';
 import { EligibilityRoadmapPage } from '../pages/student/EligibilityRoadmapPage';
 import { ScholarshipRoadmapDetailPage } from '../pages/student/ScholarshipRoadmapDetailPage';
 
@@ -132,10 +132,10 @@ export const AppRouter: React.FC = () => {
         }
       />
       <Route
-        path="/student/passport"
+        path="/student/verification"
         element={
           <ProtectedRoute role="STUDENT">
-            <ScholarshipPassportPage />
+            <VerificationCenterPage />
           </ProtectedRoute>
         }
       />
@@ -155,6 +155,7 @@ export const AppRouter: React.FC = () => {
           </ProtectedRoute>
         }
       />
+      <Route path="/student/passport" element={<Navigate to="/student/profile" replace />} />
 
       {/* Provider Portal */}
       <Route

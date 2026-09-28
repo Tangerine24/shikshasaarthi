@@ -40,5 +40,57 @@ export const VerificationController = {
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
-  }
+  },
+
+  // NEW Student Verification Endpoints
+  async getOverview(req: Request, res: Response) {
+    try {
+      const userId = (req as any).user.id;
+      const result = await VerificationService.getStudentVerificationOverview(userId);
+      res.json({ success: true, data: result });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  },
+
+  async verifyItem(req: Request, res: Response) {
+    try {
+      const userId = (req as any).user.id;
+      const { itemType, source, consentGranted } = req.body;
+      const result = await VerificationService.runVerification({
+        userId,
+        itemType,
+        source,
+        consentGranted: Boolean(consentGranted),
+      });
+      res.json({ success: true, data: result });
+    } catch (err: any) {
+      res.status(400).json({ success: false, error: err.message });
+    }
+  },
+
+  async submitManualReview(req: Request, res: Response) {
+    try {
+      const userId = (req as any).user.id;
+      const { itemType, reason } = req.body;
+      const result = await VerificationService.requestManualReview({
+        userId,
+        itemType,
+        reason: reason || 'Name variation clarification',
+      });
+      res.json({ success: true, data: result });
+    } catch (err: any) {
+      res.status(400).json({ success: false, error: err.message });
+    }
+  },
+
+  async getReadiness(req: Request, res: Response) {
+    try {
+      const userId = (req as any).user.id;
+      const result = await VerificationService.getApplicationReadiness(userId);
+      res.json({ success: true, data: result });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  },
 };

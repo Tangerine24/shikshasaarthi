@@ -231,6 +231,34 @@ export const Documents: React.FC = () => {
               const isVerified = doc.verificationState === 'VERIFIED';
               const isRejected = doc.verificationState === 'REJECTED';
 
+              let validityBadge = null;
+              if (doc.documentType === 'IDENTITY_DOCUMENT' || doc.documentType === 'COMMUNITY_CERTIFICATE' || doc.documentType === 'DOMICILE_CERTIFICATE') {
+                validityBadge = <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-emerald-200">✓ Valid for Lifetime</span>;
+              } else if (doc.documentType === 'MARKSHEET') {
+                validityBadge = <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-emerald-200">✓ Permanent Record</span>;
+              } else if (doc.documentType === 'BONAFIDE_CERTIFICATE') {
+                validityBadge = <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-amber-200">Valid for Current Academic Year</span>;
+              } else if (doc.documentType === 'BANK_DOCUMENT') {
+                validityBadge = <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-emerald-200">✓ Valid until account closure</span>;
+              } else if (doc.documentType === 'INCOME_CERTIFICATE' || doc.documentType === 'DISABILITY_CERTIFICATE') {
+                if (doc.expiryDate) {
+                  const daysUntilExpiry = Math.ceil((new Date(doc.expiryDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
+                  if (daysUntilExpiry > 90) {
+                    validityBadge = <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-emerald-200">✓ Valid</span>;
+                  } else if (daysUntilExpiry > 0) {
+                    validityBadge = <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-amber-200">Expires in {daysUntilExpiry} days</span>;
+                  } else {
+                    validityBadge = <span className="text-red-700 bg-red-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-red-200">Expired</span>;
+                  }
+                } else {
+                  if (doc.documentType === 'INCOME_CERTIFICATE') {
+                    validityBadge = <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-amber-200">Validity: 1 Year (verify expiry)</span>;
+                  } else {
+                    validityBadge = <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-emerald-200">✓ Valid for Lifetime</span>;
+                  }
+                }
+              }
+
               return (
                 <div
                   key={doc.id}
@@ -241,21 +269,24 @@ export const Documents: React.FC = () => {
                       <div className="w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center text-text-secondary">
                         <FileText className="w-4 h-4" />
                       </div>
-                      <span
-                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
-                          isVerified
-                            ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                      <div className="flex flex-col items-end gap-1">
+                        <span
+                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                            isVerified
+                              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                              : isRejected
+                              ? 'bg-red-50 text-red-800 border-red-200'
+                              : 'bg-stone-50 text-stone-700 border-stone-200'
+                          }`}
+                        >
+                          {isVerified
+                            ? t('documents.verified', 'Verified')
                             : isRejected
-                            ? 'bg-red-50 text-red-800 border-red-200'
-                            : 'bg-stone-50 text-stone-700 border-stone-200'
-                        }`}
-                      >
-                        {isVerified
-                          ? t('documents.verified', 'Verified')
-                          : isRejected
-                          ? t('documents.rejected', 'Rejected')
-                          : t('documents.uploaded', 'Uploaded')}
-                      </span>
+                            ? t('documents.rejected', 'Rejected')
+                            : t('documents.uploaded', 'Uploaded')}
+                        </span>
+                        {validityBadge}
+                      </div>
                     </div>
 
                     <h4 className="font-heading font-bold text-sm text-text-primary line-clamp-1">

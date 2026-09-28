@@ -98,7 +98,7 @@ export const ApplicationDetailPage: React.FC = () => {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className="text-xs text-text-muted flex items-center gap-1">
             <Building2 className="w-3.5 h-3.5" />
-            {application.scholarship?.provider?.organizationName || 'Ministry of Tribal Affairs'}
+            {application.scholarship?.provider?.organizationName || 'National Scholarship Portal'}
           </span>
           <StatusBadge status={application.status} />
         </div>

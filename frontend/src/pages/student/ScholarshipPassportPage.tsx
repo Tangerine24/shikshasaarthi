@@ -199,50 +199,7 @@ export const ScholarshipPassportPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Applications Summary */}
-        <div className="bg-surface rounded-card shadow-xs border border-border p-6">
-          <h3 className="text-base font-heading font-bold text-primary-dark flex items-center gap-2 mb-4">
-            <BadgeCheck className="text-accent h-5 w-5" />
-            {t('applications.title')}
-          </h3>
-          <div className="flex gap-4">
-            <div className="flex-1 bg-primary/5 p-4 rounded-lg border border-primary/20 text-center">
-              <p className="text-3xl font-heading font-bold text-primary mb-1">{activeApps.length}</p>
-              <p className="text-xs font-semibold text-text-secondary uppercase">{t('status.SUBMITTED')}</p>
-            </div>
-            <div className="flex-1 bg-stone-50 p-4 rounded-lg border border-border text-center">
-              <p className="text-3xl font-heading font-bold text-text-primary mb-1">{pastApps.length}</p>
-              <p className="text-xs font-semibold text-text-muted uppercase">{t('status.APPROVED')}</p>
-            </div>
-          </div>
-        </div>
 
-        {/* Consent Records */}
-        <div className="bg-surface rounded-card shadow-xs border border-border p-6">
-          <h3 className="text-base font-heading font-bold text-primary-dark flex items-center gap-2 mb-4">
-            <Shield className="text-primary h-5 w-5" />
-            {t('nav.passport')} DPDP 2023
-          </h3>
-          <div className="space-y-3">
-            {consents.length === 0 ? (
-              <p className="text-xs text-text-muted">{t('common.demo_notice')}</p>
-            ) : (
-              consents.map((consent: any, idx: number) => (
-                <div key={idx} className="flex justify-between items-center p-3 bg-stone-50 rounded-lg border border-border">
-                  <div>
-                    <p className="text-xs font-bold text-text-primary">{consent.purpose}</p>
-                    <p className="text-[10px] text-text-muted">{consent.createdAt ? new Date(consent.createdAt).toLocaleDateString() : 'Active'}</p>
-                  </div>
-                  <span className="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
-                    {t('documents.verified')}
-                  </span>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

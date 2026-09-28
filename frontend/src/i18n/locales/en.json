@@ -23,8 +23,8 @@
     "demo_notice": "DEMO",
     "see_all": "See all",
     "language": "Language",
-    "ministry": "Ministry of Tribal Affairs",
-    "sih_tagline": "SIH 2026 Prototype | Unified Tribal Scholarship Assistance"
+    "ministry": "Scholarship Authority",
+    "sih_tagline": "Unified Scholarship Assistance Platform"
   },
   "nav": {
     "home": "Home",
@@ -357,13 +357,13 @@
   },
   "landing_extra": {
     "browse_schemes": "Browse Active Schemes",
-    "official_schemes": "Official Ministry Schemes",
+    "official_schemes": "Official Scholarship Schemes",
     "featured_title": "Featured Scholarship Assistance",
     "view_all": "View all available scholarships",
     "annual_benefit_label": "ANNUAL BENEFIT",
     "check_eligibility": "Check Eligibility",
-    "footer_platform": "ShikshaSaarthi — Unified Scholarship Assistance Platform for Tribal Students",
-    "footer_sih": "Smart India Hackathon (SIH 2026) | Problem Statement: SIH26238 | Ministry of Tribal Affairs",
+    "footer_platform": "ShikshaSaarthi — Unified Scholarship Assistance Platform",
+    "footer_sih": "ShikshaSaarthi — Transparent, Verifiable Scholarship Access",
     "footer_demo": "Demonstration platform. All data is for simulation and educational review.",
     "demo_note": "Demo Credentials Available on Login: Student, Provider & Admin"
   },

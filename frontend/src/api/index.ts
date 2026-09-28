@@ -228,6 +228,22 @@ export const paymentApi = {
 };
 
 export const verificationApi = {
+  async getOverview(): Promise<{ success: boolean; data: any }> {
+    const res = await client.get('/verification/status');
+    return res.data;
+  },
+  async verify(itemType: string, source: string, consentGranted: boolean): Promise<{ success: boolean; data: any }> {
+    const res = await client.post('/verification/verify', { itemType, source, consentGranted });
+    return res.data;
+  },
+  async requestManualReview(itemType: string, reason: string): Promise<{ success: boolean; data: any }> {
+    const res = await client.post('/verification/manual-review', { itemType, reason });
+    return res.data;
+  },
+  async getReadiness(): Promise<{ success: boolean; data: any }> {
+    const res = await client.get('/verification/readiness');
+    return res.data;
+  },
   async listExceptions(status?: string): Promise<{ success: boolean; data: any[] }> {
     const res = await client.get('/verification/exceptions', { params: { status } });
     return res.data;

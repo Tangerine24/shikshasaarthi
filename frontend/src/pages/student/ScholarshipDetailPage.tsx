@@ -137,7 +137,7 @@ export const ScholarshipDetailPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <span className="text-xs text-text-muted flex items-center gap-1">
               <Building2 className="w-3.5 h-3.5" />
-              {scholarship.provider?.organizationName || 'Ministry of Tribal Affairs'}
+              {scholarship.provider?.organizationName || 'National Scholarship Portal'}
             </span>
             <span className="text-xs text-text-muted">• Domicile: {scholarship.targetGroup || 'ST Students'}</span>
           </div>

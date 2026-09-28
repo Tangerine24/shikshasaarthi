@@ -13,6 +13,14 @@ const providerAdminCheck = (req: Request, res: Response, next: NextFunction) => 
 };
 
 router.use(authMiddleware);
+
+// Student Verification Center routes
+router.get('/status', VerificationController.getOverview);
+router.post('/verify', VerificationController.verifyItem);
+router.post('/manual-review', VerificationController.submitManualReview);
+router.get('/readiness', VerificationController.getReadiness);
+
+// Provider / Admin Exception routes
 router.get('/exceptions', providerAdminCheck, VerificationController.listExceptions);
 router.get('/exceptions/:id', VerificationController.getException);
 router.post('/exceptions/:id/resolve', providerAdminCheck, VerificationController.resolveException);

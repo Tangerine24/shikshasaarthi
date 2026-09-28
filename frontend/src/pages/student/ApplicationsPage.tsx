@@ -73,7 +73,7 @@ export const ApplicationsPage: React.FC = () => {
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-xs text-text-muted flex items-center gap-1">
                     <Building2 className="w-3.5 h-3.5" />
-                    {app.scholarship?.provider?.organizationName || 'Ministry of Tribal Affairs'}
+                    {app.scholarship?.provider?.organizationName || 'National Scholarship Portal'}
                   </span>
                   <span className="text-xs text-text-muted">•</span>
                   <StatusBadge status={app.status} />

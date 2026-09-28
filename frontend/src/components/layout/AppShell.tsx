@@ -15,6 +15,7 @@ import {
   LogOut,
   Building2,
   Shield,
+  ShieldCheck,
   Milestone,
   Menu,
   X,
@@ -57,10 +58,10 @@ export const AppShell: React.FC<Props> = ({ children }) => {
   const studentNav: NavItem[] = [
     { to: '/student/dashboard', icon: LayoutDashboard, label: t('nav.overview', 'Overview') },
     { to: '/student/eligibility-roadmap', icon: Milestone, label: t('nav.eligibility_roadmap', 'Eligibility Roadmap') },
-    { to: '/student/passport', icon: Shield, label: t('nav.passport', 'Scholarship Passport') },
     { to: '/student/scholarships', icon: GraduationCap, label: t('nav.scholarships', 'Scholarships') },
     { to: '/student/applications', icon: FileCheck2, label: t('nav.applications', 'Applications') },
     { to: '/student/documents', icon: FolderOpen, label: t('nav.documents', 'Document Wallet') },
+    { to: '/student/verification', icon: ShieldCheck, label: 'Verification Center' },
     { to: '/student/jago', icon: MessageSquareHeart, label: t('nav.jago', 'JAGO Assistant') },
     { to: '/student/profile', icon: UserCheck, label: t('nav.profile', 'My Profile') },
     {
@@ -101,7 +102,7 @@ export const AppShell: React.FC<Props> = ({ children }) => {
               </div>
               <div>
                 <h1 className="font-heading font-bold text-base text-primary leading-tight">ShikshaSaarthi</h1>
-                <p className="text-[10px] text-text-muted font-medium">{t('common.ministry', 'Ministry of Tribal Affairs')}</p>
+                <p className="text-[10px] text-text-muted font-medium">Unified Scholarship Portal</p>
               </div>
             </Link>
           </div>
@@ -169,9 +170,9 @@ export const AppShell: React.FC<Props> = ({ children }) => {
             </button>
             <div className="hidden sm:block">
               <span className="text-xs font-semibold text-primary uppercase tracking-wider">
-                SIH 2026
+                ShikshaSaarthi
               </span>
-              <span className="text-xs text-text-muted ml-2">| {t('common.sih_tagline', 'Unified Tribal Scholarship Assistance')}</span>
+              <span className="text-xs text-text-muted ml-2">| Unified Scholarship Assistance Platform</span>
             </div>
           </div>
 

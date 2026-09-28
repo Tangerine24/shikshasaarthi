@@ -136,10 +136,10 @@ export const EligibilityRoadmapPage: React.FC = () => {
         <div className="flex space-x-2 border-b border-[#D9E2EC] overflow-x-auto pb-px">
           {[
             { key: 'All', label: t('roadmap.complete_journey', 'Complete Journey') },
+            { key: 'Steps', label: t('roadmap.your_next_steps', 'Your Next Steps') },
             { key: 'Eligible', label: t('roadmap.eligible_now', 'Eligible Now') },
             { key: 'Almost', label: t('roadmap.almost_eligible', 'Almost Eligible') },
             { key: 'Future', label: t('roadmap.future_opportunities', 'Future Opportunities') },
-            { key: 'Steps', label: t('roadmap.your_next_steps', 'Your Next Steps') },
           ].map(tab => (
             <button
               key={tab.key}

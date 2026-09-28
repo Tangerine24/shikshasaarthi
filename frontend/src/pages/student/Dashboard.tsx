@@ -20,6 +20,7 @@ import {
   Clock,
   CheckCircle2,
   Milestone,
+  ShieldCheck,
 } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -126,37 +127,32 @@ const Dashboard: React.FC = () => {
             <h2 className="font-heading font-bold text-2xl text-primary-dark">
               {getGreeting()}, {profile?.fullName || user?.email?.split('@')[0]}!
             </h2>
-            <span className="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-0.5 rounded-full">
-              {profile?.category ? `${profile.category} (${t('dashboard_extra.scheduled_tribe')})` : `ST (${t('dashboard_extra.scheduled_tribe')})`}
-            </span>
           </div>
           <p className="text-sm text-text-secondary mt-1">
-            {profile?.institution ? `${profile.course} • ${profile.institution}` : t('landing_extra.footer_platform')}
+            {profile?.institution ? `${profile.course} • ${profile.institution}` : 'Unified Scholarship Portal'}
           </p>
         </div>
 
-        {profile && (
-          <div className="bg-stone-50 border border-border p-3.5 rounded-lg flex items-center gap-4 shrink-0">
-            <div>
-              <div className="flex justify-between items-center text-xs mb-1">
-                <span className="font-semibold text-text-secondary">{t('profile.completion', 'Profile')}:</span>
-                <span className="font-bold text-primary">{profile.profileCompletePercent}%</span>
-              </div>
-              <div className="w-32 bg-stone-200 h-2 rounded-full overflow-hidden">
-                <div
-                  className="bg-primary h-full transition-all duration-500 rounded-full"
-                  style={{ width: `${profile.profileCompletePercent}%` }}
-                />
-              </div>
+        {/* Verification Status Compact Card */}
+        <div className="bg-stone-50 border border-border p-3 rounded-lg flex items-center justify-between gap-4 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+              <ShieldCheck className="w-4 h-4 text-emerald-700" />
             </div>
-            <Link
-              to="/student/profile"
-              className="text-xs font-semibold text-primary hover:text-primary-dark hover:underline"
-            >
-              {t('common.edit', 'Edit')}
-            </Link>
+            <div>
+              <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider block">
+                Verification Status
+              </span>
+              <span className="text-sm font-bold text-text-primary">5/7 Verified</span>
+            </div>
           </div>
-        )}
+          <Link
+            to="/student/verification"
+            className="text-xs font-semibold bg-primary hover:bg-primary-dark text-white px-3 py-1.5 rounded transition"
+          >
+            Open Verification Center
+          </Link>
+        </div>
       </section>
 
       {/* Dynamic Next Action Card */}
@@ -286,7 +282,7 @@ const Dashboard: React.FC = () => {
                 <div>
                   <div className="flex justify-between items-start gap-2 mb-2">
                     <span className="text-xs text-text-muted">
-                      {app.scholarship?.provider?.organizationName || 'Ministry of Tribal Affairs'}
+                      {app.scholarship?.provider?.organizationName || 'National Scholarship Portal'}
                     </span>
                     <StatusBadge status={app.status} />
                   </div>
