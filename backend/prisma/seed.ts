@@ -58,6 +58,17 @@ async function main() {
     },
   });
 
+  const nitkSurathkal = await prisma.institution.create({
+    data: {
+      aisheCode: 'U-0214',
+      name: 'National Institute of Technology Karnataka (NITK), Surathkal',
+      type: 'Institute of National Importance',
+      state: 'Karnataka',
+      district: 'Dakshina Kannada',
+      isVerified: true,
+    },
+  });
+
   const ranchiUniv = await prisma.institution.create({
     data: {
       aisheCode: 'U-0242',
@@ -82,6 +93,12 @@ async function main() {
 
   // State District References
   const districts = [
+    { stateName: 'Karnataka', districtName: 'Bengaluru Urban', stateCode: 'KA', districtCode: 'KA-01' },
+    { stateName: 'Karnataka', districtName: 'Dakshina Kannada', stateCode: 'KA', districtCode: 'KA-02' },
+    { stateName: 'Karnataka', districtName: 'Mysuru', stateCode: 'KA', districtCode: 'KA-03' },
+    { stateName: 'Karnataka', districtName: 'Belagavi', stateCode: 'KA', districtCode: 'KA-04' },
+    { stateName: 'Karnataka', districtName: 'Kalaburagi', stateCode: 'KA', districtCode: 'KA-05' },
+    { stateName: 'Karnataka', districtName: 'Dharwad', stateCode: 'KA', districtCode: 'KA-06' },
     { stateName: 'Jharkhand', districtName: 'Ranchi', stateCode: 'JH', districtCode: 'JH-01' },
     { stateName: 'Jharkhand', districtName: 'Khunti', stateCode: 'JH', districtCode: 'JH-02' },
     { stateName: 'Jharkhand', districtName: 'Gumla', stateCode: 'JH', districtCode: 'JH-03' },
@@ -95,7 +112,7 @@ async function main() {
     await prisma.stateDistrictReference.create({ data: d });
   }
 
-  // 1. Seed Demo Student (Explicit ST Caste - Santhal Tribe)
+  // 1. Seed Demo Student (Explicit ST Caste - Naikda / Santhal Tribe, Karnataka Domicile)
   const studentUser = await prisma.user.create({
     data: {
       email: 'student@demo.shikshasaarthi.in',
@@ -135,20 +152,20 @@ async function main() {
       fullName: 'Ramesh Kumar',
       dateOfBirth: new Date('2004-07-15'),
       gender: 'MALE',
-      state: 'Jharkhand',
-      district: 'Ranchi',
+      state: 'Karnataka',
+      district: 'Bengaluru Urban',
       category: 'ST', // Explicit Scheduled Tribe category
       annualFamilyIncome: 150000,
       educationLevel: 'UG',
-      institution: 'Birla Institute of Technology, Mesra',
-      institutionId: bitMesra.id,
+      institution: 'National Institute of Technology Karnataka (NITK), Surathkal',
+      institutionId: nitkSurathkal.id,
       course: 'B.Tech Computer Science & Engineering',
       yearOfStudy: 2,
       academicPercentage: 78.5,
       isHosteller: true,
       hasDisability: false,
       hasBankAccount: true,
-      previousScholarship: 'Pre-Matric Tribal Scholarship (2022-24)',
+      previousScholarship: 'Pre-Matric Tribal Scholarship (Karnataka)',
       profileCompletePercent: 96,
     },
   });
@@ -228,13 +245,13 @@ async function main() {
       benefitDescription: '₹50,000 per academic year (direct benefit transfer to Aadhaar-seeded bank account)',
       deadline: new Date(Date.now() + 90 * 86400000),
       status: 'PUBLISHED',
-      targetGroup: 'ST undergraduate engineering & professional students in Jharkhand',
+      targetGroup: 'ST undergraduate engineering & professional students in Karnataka and across India',
       applicationProcess: '1. Complete student profile. 2. Verify ST & Income certificates. 3. Submit application online. 4. Institution verifies enrollment.',
       isDemo: true,
       eligibilityRules: {
         create: [
           { field: 'category', operator: 'IN', value: '["ST"]', description: 'Belong to Scheduled Tribe (ST) category', isRequired: true },
-          { field: 'state', operator: 'EQ', value: '"Jharkhand"', description: 'Domicile of Jharkhand state', isRequired: true },
+          { field: 'state', operator: 'IN', value: '["Karnataka", "Jharkhand", "All India"]', description: 'Domicile of Karnataka or Jharkhand', isRequired: false },
           { field: 'annualFamilyIncome', operator: 'LTE', value: '250000', description: 'Annual family income not exceeding ₹2,50,000', isRequired: true },
           { field: 'educationLevel', operator: 'EQ', value: '"UG"', description: 'Enrolled in an Undergraduate degree programme', isRequired: true },
           { field: 'academicPercentage', operator: 'GTE', value: '60', description: 'Minimum 60% marks in previous examination', isRequired: true },
@@ -448,19 +465,82 @@ async function main() {
     },
   });
 
+  // Scholarship 8: National Pre-Matric Scholarship Scheme for ST Students (Class 9 & 10)
+  const sPreMatric = await prisma.scholarship.create({
+    data: {
+      providerId: providerProfile.id,
+      cycleId: activeCycle.id,
+      title: 'National Pre-Matric Scholarship Scheme for ST Students (Class 9 & 10)',
+      description: 'Centrally sponsored scholarship scheme by Ministry of Tribal Affairs to support Scheduled Tribe children studying in Classes IX and X to minimize dropouts and support transition to secondary education.',
+      benefit: 12000,
+      benefitDescription: '₹12,000 per academic year (direct benefit transfer to Aadhaar-seeded account of student/parent)',
+      deadline: new Date(Date.now() + 65 * 86400000),
+      status: 'PUBLISHED',
+      targetGroup: 'ST students studying in Class 9 or 10 in recognized schools across India',
+      applicationProcess: 'Submit student identity, caste certificate, and school enrollment certificate.',
+      isDemo: true,
+      eligibilityRules: {
+        create: [
+          { field: 'category', operator: 'IN', value: '["ST"]', description: 'Scheduled Tribe (ST) category', isRequired: true },
+          { field: 'educationLevel', operator: 'EQ', value: '"PRE_MATRIC"', description: 'Enrolled in Class 9 or Class 10 (Pre-Matric)', isRequired: true },
+          { field: 'annualFamilyIncome', operator: 'LTE', value: '250000', description: 'Annual parental income not exceeding ₹2,50,000', isRequired: true },
+        ],
+      },
+      documentRequirements: {
+        create: [
+          { documentType: 'COMMUNITY_CERTIFICATE', description: 'ST Community / Caste Certificate', isRequired: true },
+          { documentType: 'INCOME_CERTIFICATE', description: 'Parental Income Certificate', isRequired: true },
+          { documentType: 'BONAFIDE_CERTIFICATE', description: 'School Bonafide / Headmaster Certificate', isRequired: true },
+        ],
+      },
+    },
+  });
+
+  // Scholarship 9: Karnataka State Post-Matric Scholarship for ST Students (SSP)
+  const sKarnataka = await prisma.scholarship.create({
+    data: {
+      providerId: providerProfile.id,
+      cycleId: activeCycle.id,
+      title: 'Karnataka State Post-Matric Scholarship for ST Students (SSP)',
+      description: 'State Scholarship Portal (SSP) financial assistance for Scheduled Tribe students pursuing higher education in colleges and universities within Karnataka.',
+      benefit: 45000,
+      benefitDescription: '₹45,000 per annum covering tuition, exam fees, and maintenance charges',
+      deadline: new Date(Date.now() + 50 * 86400000),
+      status: 'PUBLISHED',
+      targetGroup: 'ST students domiciled in Karnataka studying in recognized colleges',
+      applicationProcess: 'Apply online through SSP integration with verified Aadhaar and ST certificate.',
+      isDemo: true,
+      eligibilityRules: {
+        create: [
+          { field: 'category', operator: 'IN', value: '["ST"]', description: 'Scheduled Tribe (ST) category', isRequired: true },
+          { field: 'state', operator: 'EQ', value: '"Karnataka"', description: 'Domicile of Karnataka state', isRequired: true },
+          { field: 'educationLevel', operator: 'EQ', value: '"UG"', description: 'Post-Matric / Undergraduate degree', isRequired: true },
+          { field: 'annualFamilyIncome', operator: 'LTE', value: '250000', description: 'Family income <= ₹2,50,000/year', isRequired: true },
+        ],
+      },
+      documentRequirements: {
+        create: [
+          { documentType: 'COMMUNITY_CERTIFICATE', description: 'Karnataka ST Caste Certificate with RD Number', isRequired: true },
+          { documentType: 'INCOME_CERTIFICATE', description: 'Income Certificate from Revenue Dept', isRequired: true },
+          { documentType: 'BONAFIDE_CERTIFICATE', description: 'College Bonafide / Fee Receipt', isRequired: true },
+        ],
+      },
+    },
+  });
+
   // 5. Seed Comprehensive Student Documents for Ramesh Kumar (Tribal Scholar)
   const docCommunity = await prisma.studentDocument.create({
     data: {
       studentId: studentProfile.id,
       documentType: 'COMMUNITY_CERTIFICATE',
-      fileName: 'st_caste_certificate_ramesh_santhal.pdf',
-      originalName: 'ST_Certificate_Santhal_SDO_Ranchi.pdf',
+      fileName: 'st_caste_certificate_ramesh_karnataka.pdf',
+      originalName: 'ST_Certificate_Naikda_Tahsildar_Bengaluru.pdf',
       storagePath: 'uploads/demo/st_caste_certificate_ramesh.pdf',
       mimeType: 'application/pdf',
       fileSize: 420500,
       verificationState: 'VERIFIED',
       expiryDate: new Date('2035-12-31'),
-      notes: 'Scheduled Tribe (Santhal) verified against Jharkhand State ST Registry',
+      notes: 'Scheduled Tribe (Naikda/ST) verified against Karnataka State ST Welfare Registry',
     },
   });
 
@@ -469,13 +549,13 @@ async function main() {
       studentId: studentProfile.id,
       documentType: 'INCOME_CERTIFICATE',
       fileName: 'income_certificate_2025_26.pdf',
-      originalName: 'Income_Certificate_CO_Kanke_2025.pdf',
+      originalName: 'Income_Certificate_Tahsildar_Bengaluru_2025.pdf',
       storagePath: 'uploads/demo/income_certificate_2025_26.pdf',
       mimeType: 'application/pdf',
       fileSize: 310200,
       verificationState: 'VERIFIED',
       expiryDate: new Date(Date.now() + 18 * 86400000), // 18 days left (Triggers Document Health warning)
-      notes: 'Family income verified at ₹1,50,000/yr. Renewal recommended in 18 days.',
+      notes: 'Family income verified at ₹1,50,000/yr by Revenue Authority.',
     },
   });
 
@@ -484,12 +564,12 @@ async function main() {
       studentId: studentProfile.id,
       documentType: 'MARKSHEET',
       fileName: 'btech_cse_sem2_marksheet.pdf',
-      originalName: 'BIT_Mesra_BTech_CSE_Sem2_Transcript.pdf',
+      originalName: 'NITK_Surathkal_BTech_CSE_Sem2_Transcript.pdf',
       storagePath: 'uploads/demo/btech_sem2_marksheet.pdf',
       mimeType: 'application/pdf',
       fileSize: 680400,
       verificationState: 'VERIFIED',
-      notes: 'Cumulative CGPA 7.85 / 78.5% verified by Examination Controller, BIT Mesra',
+      notes: 'Cumulative CGPA 7.85 / 78.5% verified by Examination Controller, NITK Surathkal',
     },
   });
 
@@ -497,13 +577,13 @@ async function main() {
     data: {
       studentId: studentProfile.id,
       documentType: 'BONAFIDE_CERTIFICATE',
-      fileName: 'bit_mesra_bonafide_2025_26.pdf',
-      originalName: 'BIT_Mesra_Bonafide_Roll_24BTECH089.pdf',
-      storagePath: 'uploads/demo/bit_mesra_bonafide.pdf',
+      fileName: 'nitk_surathkal_bonafide_2025_26.pdf',
+      originalName: 'NITK_Surathkal_Bonafide_Roll_24BTECH089.pdf',
+      storagePath: 'uploads/demo/nitk_surathkal_bonafide.pdf',
       mimeType: 'application/pdf',
       fileSize: 345000,
       verificationState: 'VERIFIED',
-      notes: 'Bonafide 2nd Year UG Student (AISHE: U-0239)',
+      notes: 'Bonafide 2nd Year UG Student, NITK Surathkal (AISHE: U-0214)',
     },
   });
 
@@ -558,7 +638,7 @@ async function main() {
             fromStatus: 'SUBMITTED',
             toStatus: 'UNDER_VERIFICATION',
             actorId: providerUser.id,
-            note: 'Under institutional review by BIT Mesra Nodal Officer',
+            note: 'Under institutional review by NITK Surathkal Nodal Officer',
             createdAt: new Date(Date.now() - 2 * 86400000),
           },
         ],
@@ -615,11 +695,11 @@ async function main() {
     },
   });
 
-  // Application 3: s7 (E-Kalyan Jharkhand Post-Matric) -> Status: SUBMITTED
+  // Application 3: sKarnataka (Karnataka State Post-Matric) -> Status: SUBMITTED
   const app3 = await prisma.application.create({
     data: {
       studentId: studentProfile.id,
-      scholarshipId: s7.id,
+      scholarshipId: sKarnataka.id,
       cycleId: activeCycle.id,
       status: 'SUBMITTED',
       submittedAt: new Date(Date.now() - 1 * 86400000),
@@ -635,7 +715,7 @@ async function main() {
           {
             toStatus: 'DRAFT',
             actorId: studentUser.id,
-            note: 'Draft initiated on E-Kalyan portal',
+            note: 'Draft initiated on Karnataka State Scholarship Portal (SSP)',
             createdAt: new Date(Date.now() - 2 * 86400000),
           },
           {
@@ -694,7 +774,7 @@ async function main() {
       applicationId: app1.id,
       amount: 50000,
       dbtStatus: 'DBT_PROCESSING',
-      transactionRef: 'PFMS-2026-JH-883921',
+      transactionRef: 'PFMS-2026-KA-883921',
       failureReason: null,
       eventDate: new Date(Date.now() - 1 * 86400000),
     },
@@ -706,7 +786,7 @@ async function main() {
       applicationId: app2.id,
       amount: 30000,
       dbtStatus: 'PAID',
-      transactionRef: 'PFMS-2025-JH-774910',
+      transactionRef: 'PFMS-2025-KA-774910',
       failureReason: null,
       eventDate: new Date(Date.now() - 25 * 86400000),
     },
@@ -720,9 +800,9 @@ async function main() {
       riskType: 'IDENTITY_MISMATCH',
       severity: 'MEDIUM',
       reason: 'Name nuance detected between DigiLocker credential ("Ramesh K") and student profile ("Ramesh Kumar").',
-      evidence: 'DigiLocker Certificate Record ID: DL-ST-2022-99812 (Santhal Tribe, Ranchi)',
+      evidence: 'DigiLocker Certificate Record ID: DL-ST-2022-99812 (Naikda Tribe, Bengaluru)',
       status: 'ACTIVE',
-      recommendedAction: 'Verify institutional roll sheet from BIT Mesra.',
+      recommendedAction: 'Verify institutional roll sheet from NITK Surathkal.',
     },
   });
 
@@ -733,7 +813,7 @@ async function main() {
         userId: studentUser.id,
         type: 'PAYMENT_UPDATE',
         title: 'DBT Payment Disbursed / छात्रवृत्ति राशि प्राप्त',
-        body: '₹30,000 has been successfully credited to your SBI account ending in 4108 for ST Undergraduate Academic Assistance Scheme (Ref: PFMS-2025-JH-774910).',
+        body: '₹30,000 has been successfully credited to your SBI account ending in 4108 for ST Undergraduate Academic Assistance Scheme (Ref: PFMS-2025-KA-774910).',
         isRead: false,
         metadata: JSON.stringify({ applicationId: app2.id, amount: 30000 }),
         createdAt: new Date(Date.now() - 25 * 86400000),
@@ -742,7 +822,7 @@ async function main() {
         userId: studentUser.id,
         type: 'VERIFICATION_UPDATE',
         title: 'Application Under Verification',
-        body: 'Your application for Tribal Higher Education Support Scholarship is under active review by BIT Mesra Nodal Officer.',
+        body: 'Your application for Tribal Higher Education Support Scholarship is under active review by NITK Surathkal Nodal Officer.',
         isRead: false,
         metadata: JSON.stringify({ applicationId: app1.id }),
         createdAt: new Date(Date.now() - 2 * 86400000),
@@ -751,7 +831,7 @@ async function main() {
         userId: studentUser.id,
         type: 'DOCUMENT_EXPIRING',
         title: 'Document Expiry Alert / दस्तावेज़ नवीनीकरण',
-        body: 'Your Income Certificate expires in 18 days. Please renew with Circle Officer to ensure uninterrupted DBT disbursements.',
+        body: 'Your Income Certificate expires in 18 days. Please renew with Tahsildar to ensure uninterrupted DBT disbursements.',
         isRead: false,
         metadata: JSON.stringify({ documentId: docIncome.id, daysLeft: 18 }),
         createdAt: new Date(Date.now() - 1 * 86400000),
@@ -760,9 +840,9 @@ async function main() {
         userId: studentUser.id,
         type: 'SCHOLARSHIP_MATCH',
         title: 'New 100% Eligible Scheme Found!',
-        body: 'You are 100% eligible for Birsa Munda Technical Education Fellowship (₹65,000/year). Check your Eligibility Roadmap now.',
+        body: 'You are 100% eligible for Karnataka State Post-Matric Scholarship (₹45,000/year). Check your Eligibility Roadmap now.',
         isRead: false,
-        metadata: JSON.stringify({ scholarshipId: s6.id }),
+        metadata: JSON.stringify({ scholarshipId: sKarnataka.id }),
         createdAt: new Date(),
       },
     ],
@@ -772,7 +852,7 @@ async function main() {
   console.log('----------------------------------------------------');
   console.log('DEMO CREDENTIALS:');
   console.log('  Student : student@demo.shikshasaarthi.in  / Demo@1234');
-  console.log('            (Ramesh Kumar, ST - Santhal, BIT Mesra)');
+  console.log('            (Ramesh Kumar, ST - Karnataka, NITK Surathkal)');
   console.log('  Provider: provider@demo.shikshasaarthi.in / Demo@1234');
   console.log('            (Ministry of Tribal Affairs)');
   console.log('  Admin   : admin@demo.shikshasaarthi.in    / Demo@1234');

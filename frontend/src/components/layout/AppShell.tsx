@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { LanguageSwitcher } from '../ui/LanguageSwitcher';
-import { notificationApi } from '../../api';
+import { notificationApi, studentApi } from '../../api';
+import { StudentProfile } from '../../types';
 import {
   LayoutDashboard,
   GraduationCap,
@@ -19,6 +20,11 @@ import {
   Milestone,
   Menu,
   X,
+  User,
+  ChevronDown,
+  CheckCircle2,
+  MapPin,
+  ExternalLink,
 } from 'lucide-react';
 
 interface Props {
@@ -32,16 +38,55 @@ export const AppShell: React.FC<Props> = ({ children }) => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [profile, setProfile] = useState<StudentProfile | null>(null);
+  const [profilePopoverOpen, setProfilePopoverOpen] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  const studentPhotoUrl =
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80';
 
   useEffect(() => {
     if (user?.role === 'STUDENT') {
-      notificationApi.list().then((res) => {
-        if (res.success && res.data) {
-          setUnreadCount(res.data.unreadCount || 0);
-        }
-      }).catch(() => {});
+      notificationApi
+        .list()
+        .then((res) => {
+          if (res.success && res.data) {
+            setUnreadCount(res.data.unreadCount || 0);
+          }
+        })
+        .catch(() => {});
+
+      studentApi
+        .getProfile()
+        .then((res) => {
+          if (res.success && res.data) {
+            setProfile(res.data);
+          }
+        })
+        .catch(() => {});
     }
   }, [user, location.pathname]);
+
+  // Close menus on page navigation
+  useEffect(() => {
+    setProfilePopoverOpen(false);
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  // Click outside listener for profile popover
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setProfilePopoverOpen(false);
+      }
+    };
+    if (profilePopoverOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [profilePopoverOpen]);
 
   const handleLogout = () => {
     logout();
@@ -88,6 +133,10 @@ export const AppShell: React.FC<Props> = ({ children }) => {
       : user?.role === 'ADMIN'
       ? adminNav
       : studentNav;
+
+  const displayName = profile?.fullName || (user?.email?.split('@')[0] ? 'Ramesh Kumar' : 'Student');
+  const userInstitution = profile?.institution || 'National Institute of Technology Karnataka (NITK), Surathkal';
+  const userState = profile?.state || 'Karnataka';
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -137,19 +186,42 @@ export const AppShell: React.FC<Props> = ({ children }) => {
           </nav>
         </div>
 
-        {/* User Card & Logout */}
-        <div className="p-4 border-t border-border bg-stone-50/50">
-          <div className="flex items-center justify-between mb-3">
-            <div className="truncate pr-2">
-              <p className="text-xs font-semibold text-text-primary truncate">{user?.email}</p>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                {user?.role}
-              </span>
+        {/* User Card & Logout in Sidebar */}
+        <div className="p-3 border-t border-border bg-stone-50/50">
+          <div
+            onClick={() => setProfilePopoverOpen(!profilePopoverOpen)}
+            className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-stone-100 cursor-pointer transition"
+            title="Click to view profile details"
+          >
+            <div className="relative shrink-0">
+              <img
+                src={studentPhotoUrl}
+                alt="User Profile"
+                className="w-9 h-9 rounded-full object-cover border border-primary/20"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
+              />
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-surface" />
             </div>
+
+            <div className="truncate flex-1 min-w-0">
+              <p className="text-xs font-semibold text-text-primary truncate">{displayName}</p>
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">
+                  {user?.role === 'STUDENT' ? 'ST Student' : user?.role}
+                </span>
+                <span className="text-[10px] text-text-muted truncate">• {userState}</span>
+              </div>
+            </div>
+
             <button
-              onClick={handleLogout}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleLogout();
+              }}
               title={t('nav.sign_out', 'Sign Out')}
-              className="p-1.5 text-text-muted hover:text-danger rounded hover:bg-stone-200 transition"
+              className="p-1.5 text-text-muted hover:text-danger rounded hover:bg-stone-200 transition shrink-0"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -158,9 +230,10 @@ export const AppShell: React.FC<Props> = ({ children }) => {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         {/* Top Header */}
         <header className="h-16 bg-surface border-b border-border px-4 md:px-6 flex items-center justify-between shrink-0 z-20">
+          {/* Top Left Area */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -168,7 +241,37 @@ export const AppShell: React.FC<Props> = ({ children }) => {
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-            <div className="hidden sm:block">
+
+            {/* Quick Profile Button on Top Left (Works on both desktop & mobile) */}
+            <button
+              type="button"
+              onClick={() => setProfilePopoverOpen(!profilePopoverOpen)}
+              className="flex items-center gap-2.5 p-1 sm:px-2 sm:py-1 rounded-lg hover:bg-stone-100 transition text-left"
+              title="Click to view profile details"
+            >
+              <div className="relative shrink-0">
+                <img
+                  src={studentPhotoUrl}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full object-cover border border-primary/30"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-500 rounded-full border border-surface" />
+              </div>
+              <div className="hidden sm:block">
+                <span className="text-xs font-semibold text-text-primary block leading-tight">
+                  {displayName}
+                </span>
+                <span className="text-[10px] text-emerald-700 font-medium">
+                  {user?.role === 'STUDENT' ? `ST Student • ${userState}` : user?.role}
+                </span>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-text-muted hidden sm:block" />
+            </button>
+
+            <div className="hidden lg:block pl-2 border-l border-border">
               <span className="text-xs font-semibold text-primary uppercase tracking-wider">
                 ShikshaSaarthi
               </span>
@@ -176,13 +279,15 @@ export const AppShell: React.FC<Props> = ({ children }) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          {/* Top Right Area */}
+          <div className="flex items-center gap-3">
             <LanguageSwitcher />
 
             {user?.role === 'STUDENT' && (
               <Link
                 to="/student/notifications"
                 className="relative p-2 text-text-secondary hover:text-primary transition rounded-full hover:bg-stone-100"
+                title="Notifications"
               >
                 <Bell className="w-5 h-5" />
                 {unreadCount > 0 && (
@@ -191,13 +296,121 @@ export const AppShell: React.FC<Props> = ({ children }) => {
               </Link>
             )}
 
-            <div className="hidden md:flex items-center gap-2 pl-2 border-l border-border">
-              <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">
-                {user?.email?.[0].toUpperCase() || 'U'}
-              </div>
+            {/* Avatar Button on Top Right as well */}
+            <div className="relative pl-1 border-l border-border">
+              <button
+                type="button"
+                onClick={() => setProfilePopoverOpen(!profilePopoverOpen)}
+                className="w-8 h-8 rounded-full overflow-hidden border border-primary/30 hover:ring-2 hover:ring-primary/20 transition flex items-center justify-center bg-primary/10"
+                title="View Profile Details"
+              >
+                <img
+                  src={studentPhotoUrl}
+                  alt="Student Avatar"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                />
+                <User className="w-4 h-4 text-primary" />
+              </button>
             </div>
           </div>
         </header>
+
+        {/* User Profile Brief Popover Dropdown */}
+        {profilePopoverOpen && (
+          <div
+            ref={popoverRef}
+            className="absolute top-16 left-4 sm:left-6 z-50 w-80 bg-surface rounded-card border border-border shadow-lg p-5 space-y-4 animate-fadeIn"
+          >
+            {/* Popover Header */}
+            <div className="flex items-start justify-between pb-3 border-b border-border">
+              <div className="flex items-center gap-3">
+                <div className="relative shrink-0">
+                  <img
+                    src={studentPhotoUrl}
+                    alt={displayName}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-primary/20 shadow-xs"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-surface" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-heading font-bold text-sm text-primary-dark truncate">
+                    {displayName}
+                  </h3>
+                  <p className="text-[11px] text-text-muted truncate">{user?.email}</p>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 mt-1 rounded-full bg-emerald-100 text-emerald-800">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600" /> ST Student • {userState}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setProfilePopoverOpen(false)}
+                className="text-text-muted hover:text-text-primary p-1 rounded"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Quick Details */}
+            <div className="space-y-2 text-xs">
+              <div className="p-2.5 rounded bg-stone-50 border border-border/60 space-y-1">
+                <div className="flex items-center gap-1.5 text-text-secondary font-medium">
+                  <Building2 className="w-3.5 h-3.5 text-text-muted shrink-0" />
+                  <span className="truncate">{userInstitution}</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-text-muted text-[11px]">
+                  <GraduationCap className="w-3.5 h-3.5 text-text-muted shrink-0" />
+                  <span className="truncate">
+                    {profile?.course || 'B.Tech Computer Science'} • {profile?.yearOfStudy ? `${profile.yearOfStudy}nd Year` : '2nd Year'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-[11px] px-1 text-text-muted">
+                <span>Verification Status:</span>
+                <span className="text-emerald-700 font-semibold flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5" /> Certified
+                </span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="pt-2 border-t border-border space-y-2">
+              <Link
+                to="/student/profile"
+                onClick={() => setProfilePopoverOpen(false)}
+                className="w-full py-2 px-3 rounded-md bg-primary text-surface hover:bg-primary-dark transition text-xs font-semibold flex items-center justify-center gap-1.5 shadow-2xs"
+              >
+                <UserCheck className="w-3.5 h-3.5" /> View Full Profile
+              </Link>
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  to="/student/documents"
+                  onClick={() => setProfilePopoverOpen(false)}
+                  className="py-1.5 px-2 rounded-md border border-border text-text-secondary hover:bg-stone-50 transition text-[11px] font-semibold text-center"
+                >
+                  Document Wallet
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfilePopoverOpen(false);
+                    handleLogout();
+                  }}
+                  className="py-1.5 px-2 rounded-md border border-red-200 text-danger hover:bg-red-50 transition text-[11px] font-semibold flex items-center justify-center gap-1"
+                >
+                  <LogOut className="w-3 h-3" /> Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Mobile Dropdown Nav */}
         {mobileMenuOpen && (

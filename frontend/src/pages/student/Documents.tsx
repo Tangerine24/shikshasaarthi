@@ -240,23 +240,10 @@ export const Documents: React.FC = () => {
                 validityBadge = <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-amber-200">Valid for Current Academic Year</span>;
               } else if (doc.documentType === 'BANK_DOCUMENT') {
                 validityBadge = <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-emerald-200">✓ Valid until account closure</span>;
-              } else if (doc.documentType === 'INCOME_CERTIFICATE' || doc.documentType === 'DISABILITY_CERTIFICATE') {
-                if (doc.expiryDate) {
-                  const daysUntilExpiry = Math.ceil((new Date(doc.expiryDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
-                  if (daysUntilExpiry > 90) {
-                    validityBadge = <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-emerald-200">✓ Valid</span>;
-                  } else if (daysUntilExpiry > 0) {
-                    validityBadge = <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-amber-200">Expires in {daysUntilExpiry} days</span>;
-                  } else {
-                    validityBadge = <span className="text-red-700 bg-red-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-red-200">Expired</span>;
-                  }
-                } else {
-                  if (doc.documentType === 'INCOME_CERTIFICATE') {
-                    validityBadge = <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-amber-200">Validity: 1 Year (verify expiry)</span>;
-                  } else {
-                    validityBadge = <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-emerald-200">✓ Valid for Lifetime</span>;
-                  }
-                }
+              } else if (doc.documentType === 'INCOME_CERTIFICATE') {
+                validityBadge = <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-emerald-200">✓ Valid</span>;
+              } else if (doc.documentType === 'DISABILITY_CERTIFICATE') {
+                validityBadge = <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[10px] font-semibold border border-emerald-200">✓ Valid</span>;
               }
 
               return (

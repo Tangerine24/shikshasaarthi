@@ -72,26 +72,74 @@ export const Scholarships: React.FC = () => {
         if (educationFilter) {
           list = list.filter((s) => {
             const reqs = s.eligibilityRules ? JSON.stringify(s.eligibilityRules).toUpperCase() : '';
-            const desc = (s.description + ' ' + s.title).toUpperCase();
-            
+            const desc = (s.description + ' ' + s.title + ' ' + (s.targetGroup || '')).toUpperCase();
+
             if (educationFilter === 'PRE_MATRIC') {
-              return reqs.includes('PRE_MATRIC') || reqs.includes('CLASS 10') || reqs.includes('MATRIC') || desc.includes('PRE-MATRIC') || desc.includes('CLASS 9') || desc.includes('CLASS 10');
+              // Strictly Pre-Matric: Class 1-10. Must NEVER match Post-Matric
+              return (
+                !desc.includes('POST-MATRIC') &&
+                !desc.includes('POST MATRIC') &&
+                (reqs.includes('PRE_MATRIC') ||
+                  desc.includes('PRE-MATRIC') ||
+                  desc.includes('PRE MATRIC') ||
+                  desc.includes('CLASS 9') ||
+                  desc.includes('CLASS 10') ||
+                  desc.includes('CLASS IX') ||
+                  desc.includes('CLASS X'))
+              );
             }
             if (educationFilter === 'SCHOOL') {
-              return reqs.includes('SCHOOL') || reqs.includes('11TH') || reqs.includes('12TH') || desc.includes('CLASS 12') || desc.includes('SENIOR SECONDARY');
+              return (
+                reqs.includes('SCHOOL') ||
+                reqs.includes('11TH') ||
+                reqs.includes('12TH') ||
+                desc.includes('CLASS 11') ||
+                desc.includes('CLASS 12') ||
+                desc.includes('SENIOR SECONDARY') ||
+                desc.includes('HIGHER SECONDARY')
+              );
             }
             if (educationFilter === 'DIPLOMA') {
               return reqs.includes('DIPLOMA') || desc.includes('DIPLOMA') || desc.includes('POLYTECHNIC');
             }
             if (educationFilter === 'UG') {
               // UG student should NOT see Pre-matric or Class 12 only scholarships
-              return !desc.includes('PRE-MATRIC') && !desc.includes('CLASS 9') && !desc.includes('CLASS 10') && (reqs.includes('UG') || desc.includes('UNDERGRADUATE') || desc.includes('DEGREE') || desc.includes('GRADUATION') || desc.includes('B.TECH') || desc.includes('POST-MATRIC'));
+              return (
+                !desc.includes('PRE-MATRIC') &&
+                !desc.includes('PRE MATRIC') &&
+                !desc.includes('CLASS 9') &&
+                !desc.includes('CLASS 10') &&
+                !desc.includes('CLASS 11') &&
+                !desc.includes('CLASS 12') &&
+                (reqs.includes('UG') ||
+                  desc.includes('UNDERGRADUATE') ||
+                  desc.includes('DEGREE') ||
+                  desc.includes('GRADUATION') ||
+                  desc.includes('B.TECH') ||
+                  desc.includes('POST-MATRIC') ||
+                  desc.includes('POST MATRIC'))
+              );
             }
             if (educationFilter === 'PG') {
-              return !desc.includes('PRE-MATRIC') && !desc.includes('CLASS 12') && (reqs.includes('PG') || desc.includes('POSTGRADUATE') || desc.includes('MASTER') || desc.includes('FELLOWSHIP') || desc.includes('NATIONAL FELLOWSHIP'));
+              return (
+                !desc.includes('PRE-MATRIC') &&
+                !desc.includes('CLASS 9') &&
+                !desc.includes('CLASS 10') &&
+                (reqs.includes('PG') ||
+                  desc.includes('POSTGRADUATE') ||
+                  desc.includes('MASTER') ||
+                  desc.includes('FELLOWSHIP') ||
+                  desc.includes('NATIONAL FELLOWSHIP'))
+              );
             }
             if (educationFilter === 'PHD') {
-              return reqs.includes('PHD') || reqs.includes('DOCTORATE') || desc.includes('PH.D') || desc.includes('FELLOWSHIP') || desc.includes('RESEARCH');
+              return (
+                reqs.includes('PHD') ||
+                reqs.includes('DOCTORATE') ||
+                desc.includes('PH.D') ||
+                desc.includes('FELLOWSHIP') ||
+                desc.includes('RESEARCH')
+              );
             }
             return true;
           });

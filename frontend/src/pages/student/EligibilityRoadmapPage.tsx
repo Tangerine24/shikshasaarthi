@@ -24,7 +24,7 @@ export const EligibilityRoadmapPage: React.FC = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'All' | 'Eligible' | 'Almost' | 'Future' | 'Steps'>('All');
+  const [activeTab, setActiveTab] = useState<'All' | 'Eligible' | 'Almost' | 'Future'>('All');
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -136,7 +136,6 @@ export const EligibilityRoadmapPage: React.FC = () => {
         <div className="flex space-x-2 border-b border-[#D9E2EC] overflow-x-auto pb-px">
           {[
             { key: 'All', label: t('roadmap.complete_journey', 'Complete Journey') },
-            { key: 'Steps', label: t('roadmap.your_next_steps', 'Your Next Steps') },
             { key: 'Eligible', label: t('roadmap.eligible_now', 'Eligible Now') },
             { key: 'Almost', label: t('roadmap.almost_eligible', 'Almost Eligible') },
             { key: 'Future', label: t('roadmap.future_opportunities', 'Future Opportunities') },
@@ -154,42 +153,6 @@ export const EligibilityRoadmapPage: React.FC = () => {
             </button>
           ))}
         </div>
-
-        {/* Content Sections */}
-        {(activeTab === 'All' || activeTab === 'Steps') && nextSteps.length > 0 && (
-          <section>
-            <h2 className="text-2xl font-bold text-[#12304A] mb-6 flex items-center">
-              <TrendingUp className="w-6 h-6 mr-2 text-[#0F766E]" />
-              {t('roadmap.your_next_steps', 'Your Next Steps')}
-            </h2>
-            <div className="space-y-4">
-              {nextSteps.map((step: any) => (
-                <div key={step.id} className="bg-white p-6 rounded-2xl border border-[#D9E2EC] flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                        step.urgency === 'HIGH' ? 'bg-red-100 text-red-700' :
-                        step.urgency === 'MEDIUM' ? 'bg-amber-100 text-amber-700' :
-                        'bg-gray-100 text-gray-700'
-                      }`}>
-                        {step.urgency}
-                      </span>
-                      <span className="text-xs font-medium text-gray-500 uppercase">{step.category}</span>
-                    </div>
-                    <h4 className="text-lg font-bold text-[#12304A]">{step.title}</h4>
-                    <p className="text-gray-600 mt-1">{step.description}</p>
-                    <p className="text-sm font-medium text-[#0F766E] mt-2 flex items-center">
-                      <Sparkles className="w-4 h-4 mr-1" /> {step.impact}
-                    </p>
-                  </div>
-                  <Link to={step.actionUrl} className="px-6 py-2.5 bg-white border border-[#D9E2EC] text-[#12304A] font-medium rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center whitespace-nowrap">
-                    {step.actionText || t('common.next', 'Take Action')} <ArrowRight className="w-4 h-4 ml-2" />
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
         {(activeTab === 'All' || activeTab === 'Eligible') && eligibleNow.length > 0 && (
           <section>

@@ -349,7 +349,7 @@ ${context.scholarships.map(s => `• **${getTranslatedTitle(s.title, lang)}**\n 
 
 विस्तृत पात्रता विवरण और आवश्यक दस्तावेजों की सूची देखने के लिए 'छात्रवृत्ति' पृष्ठ पर जाएं।`;
       }
-      return `Hello ${context.studentName || ''}! Based on your profile (Category: ${context.category || 'ST'}, State: ${context.state || 'Jharkhand'}), here are the matching scholarships on ShikshaSaarthi:
+      return `Hello ${context.studentName || ''}! Based on your profile (Category: ${context.category || 'ST'}, State: ${context.state || 'Karnataka'}), here are the matching scholarships on ShikshaSaarthi:
 
 ${context.scholarships.map(s => `• **${s.title}**\n  - Annual Benefit: ₹${s.benefit.toLocaleString('en-IN')}\n  - Application Deadline: ${s.deadline}`).join('\n\n')}
 

@@ -40,7 +40,93 @@ export const ScholarshipService = {
       },
     });
 
-    return scholarships.map(s => ({
+    let results = scholarships;
+
+    if (filters?.state) {
+      const targetState = filters.state.toLowerCase();
+      results = results.filter((s) => {
+        const stateRule = s.eligibilityRules.find((r) => r.field === 'state');
+        if (!stateRule) return true; // Pan-India / open to all states
+        const val = stateRule.value.toLowerCase();
+        return val.includes(targetState) || val.includes('all') || val.includes('pan-india') || val.includes('india');
+      });
+    }
+
+    if (filters?.education) {
+      const ed = filters.education.toUpperCase();
+      results = results.filter((s) => {
+        const desc = (s.title + ' ' + s.description + ' ' + (s.targetGroup || '')).toUpperCase();
+        const edRule = s.eligibilityRules.find((r) => r.field === 'educationLevel');
+        const ruleVal = edRule ? edRule.value.toUpperCase() : '';
+
+        if (ed === 'PRE_MATRIC') {
+          // Strictly Pre-Matric: Classes 1-10. Must NEVER match post-matric
+          return (
+            !desc.includes('POST-MATRIC') &&
+            !desc.includes('POST MATRIC') &&
+            (ruleVal.includes('PRE_MATRIC') ||
+              desc.includes('PRE-MATRIC') ||
+              desc.includes('PRE MATRIC') ||
+              desc.includes('CLASS 9') ||
+              desc.includes('CLASS 10') ||
+              desc.includes('CLASS IX') ||
+              desc.includes('CLASS X'))
+          );
+        }
+        if (ed === 'SCHOOL') {
+          return (
+            ruleVal.includes('SCHOOL') ||
+            desc.includes('CLASS 11') ||
+            desc.includes('CLASS 12') ||
+            desc.includes('SENIOR SECONDARY') ||
+            desc.includes('HIGHER SECONDARY')
+          );
+        }
+        if (ed === 'DIPLOMA') {
+          return ruleVal.includes('DIPLOMA') || desc.includes('DIPLOMA') || desc.includes('POLYTECHNIC');
+        }
+        if (ed === 'UG') {
+          return (
+            !desc.includes('PRE-MATRIC') &&
+            !desc.includes('PRE MATRIC') &&
+            !desc.includes('CLASS 9') &&
+            !desc.includes('CLASS 10') &&
+            !desc.includes('CLASS 11') &&
+            !desc.includes('CLASS 12') &&
+            (ruleVal.includes('UG') ||
+              desc.includes('UNDERGRADUATE') ||
+              desc.includes('BACHELOR') ||
+              desc.includes('B.TECH') ||
+              desc.includes('POST-MATRIC') ||
+              desc.includes('POST MATRIC'))
+          );
+        }
+        if (ed === 'PG') {
+          return (
+            !desc.includes('PRE-MATRIC') &&
+            !desc.includes('CLASS 9') &&
+            !desc.includes('CLASS 10') &&
+            (ruleVal.includes('PG') ||
+              desc.includes('POSTGRADUATE') ||
+              desc.includes('MASTERS') ||
+              desc.includes('M.PHIL') ||
+              desc.includes('FELLOWSHIP'))
+          );
+        }
+        if (ed === 'PHD') {
+          return (
+            ruleVal.includes('PHD') ||
+            desc.includes('PH.D') ||
+            desc.includes('DOCTORATE') ||
+            desc.includes('RESEARCH') ||
+            desc.includes('FELLOWSHIP')
+          );
+        }
+        return true;
+      });
+    }
+
+    return results.map((s) => ({
       ...s,
       deadlineInfo: calculateDeadlineStatus(s.deadline),
     }));
