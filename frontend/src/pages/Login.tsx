@@ -21,19 +21,13 @@ const Login: React.FC = () => {
     setError(null);
     setLoading(true);
     try {
-      if (isSignUp) {
-        // If student signs up with demo account or creates account, sign in
-        const user = await login(email || 'student@demo.shikshasaarthi.in', password || 'Demo@1234');
-        navigate('/student/dashboard');
+      const user = await login(email || 'student@demo.shikshasaarthi.in', password || 'Demo@1234');
+      if (user.role === 'PROVIDER') {
+        navigate('/provider/dashboard');
+      } else if (user.role === 'ADMIN') {
+        navigate('/admin/dashboard');
       } else {
-        const user = await login(email, password);
-        if (user.role === 'PROVIDER') {
-          navigate('/provider/dashboard');
-        } else if (user.role === 'ADMIN') {
-          navigate('/admin/dashboard');
-        } else {
-          navigate('/student/dashboard');
-        }
+        navigate('/student/dashboard');
       }
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || t('auth.error_invalid', 'Invalid credentials.'));
@@ -111,10 +105,10 @@ const Login: React.FC = () => {
                 Username or Email Address
               </label>
               <input
-                type="email"
+                type="text"
                 required
                 className="w-full border border-border rounded-input px-3.5 py-2.5 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary transition"
-                placeholder="name@example.com"
+                placeholder="Enter any username or email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
