@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 import { notificationApi, studentApi } from '../../api';
@@ -381,42 +382,123 @@ export const AppShell: React.FC<Props> = ({ children }) => {
           </div>
         )}
 
-        {/* Mobile Dropdown Nav */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-surface border-b border-border p-3 space-y-1 z-30">
-            {currentNav.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname.startsWith(item.to);
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium ${
-                    isActive ? 'bg-primary text-surface font-semibold' : 'text-text-secondary hover:bg-stone-100'
-                  }`}
-                >
+        {/* Mobile Slide-Over Drawer covering 70% of screen with blurred backdrop */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <div className="md:hidden fixed inset-0 z-50 overflow-hidden">
+              {/* Blurred Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setMobileMenuOpen(false)}
+                className="fixed inset-0 bg-black/45 backdrop-blur-sm"
+              />
+
+              {/* 70% Width Drawer Container */}
+              <motion.div
+                initial={{ x: '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{ type: 'spring', damping: 26, stiffness: 260 }}
+                className="fixed top-0 bottom-0 left-0 w-[70%] max-w-[340px] bg-surface shadow-2xl flex flex-col justify-between border-r border-border z-50 overflow-hidden"
+              >
+                {/* Drawer Header */}
+                <div className="p-4 border-b border-border bg-stone-50/80 flex items-center justify-between shrink-0">
+                  <Link
+                    to="/"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2.5"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-primary text-surface flex items-center justify-center font-heading font-bold text-base shadow-sm">
+                      SS
+                    </div>
+                    <div>
+                      <h2 className="font-heading font-bold text-sm text-primary leading-tight">ShikshaSaarthi</h2>
+                      <p className="text-[10px] text-text-muted font-medium">Tribal Scholarship Portal</p>
+                    </div>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-stone-200 transition"
+                    aria-label="Close menu"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* User Mini Profile inside Drawer */}
+                <div className="p-4 border-b border-border bg-gradient-to-br from-primary/5 via-surface to-stone-50 shrink-0">
                   <div className="flex items-center gap-3">
-                    <Icon className="w-4 h-4" />
-                    <span>{item.label}</span>
+                    <div className="relative shrink-0">
+                      <WhatsAppAvatar size="md" />
+                      <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-surface" />
+                    </div>
+                    <div className="truncate flex-1 min-w-0">
+                      <p className="text-xs font-bold text-primary-dark truncate">{displayName}</p>
+                      <p className="text-[10px] text-text-muted truncate">{user?.email}</p>
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">
+                          {user?.role === 'STUDENT' ? 'ST Student' : user?.role}
+                        </span>
+                        <span className="text-[10px] text-text-muted truncate">• {userState}</span>
+                      </div>
+                    </div>
                   </div>
-                  {item.badge !== undefined && (
-                    <span className="bg-accent text-surface text-[10px] px-1.5 py-0.5 rounded-full font-bold">
-                      {item.badge}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-danger hover:bg-red-50 rounded-md mt-2 font-medium"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>{t('nav.sign_out', 'Sign Out')}</span>
-            </button>
-          </div>
-        )}
+                </div>
+
+                {/* Nav Links List */}
+                <nav className="p-3 space-y-1 flex-1 overflow-y-auto">
+                  {currentNav.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = location.pathname.startsWith(item.to);
+                    return (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition ${
+                          isActive
+                            ? 'bg-primary text-surface font-semibold shadow-xs'
+                            : 'text-text-secondary hover:bg-stone-100 hover:text-text-primary'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Icon className="w-4 h-4 shrink-0" />
+                          <span className="truncate">{item.label}</span>
+                        </div>
+                        {item.badge !== undefined && (
+                          <span className="bg-accent text-surface text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                            {item.badge}
+                          </span>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </nav>
+
+                {/* Drawer Footer with Logout & Tagline */}
+                <div className="p-3 border-t border-border bg-stone-50/60 space-y-2 shrink-0">
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold text-danger bg-red-50 hover:bg-red-100 transition border border-red-200"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>{t('nav.sign_out', 'Sign Out')}</span>
+                  </button>
+                  <p className="text-[10px] text-center text-text-muted">
+                    Ministry of Tribal Affairs • SIH 2026
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
         {/* Page Body */}
         <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8">
@@ -448,7 +530,7 @@ export const AppShell: React.FC<Props> = ({ children }) => {
                 }`}
               >
                 <GraduationCap className="w-5 h-5 mb-0.5" />
-                <span>Schemes</span>
+                <span>Scholarships</span>
               </Link>
 
               {/* JAGO AI featured center button */}
@@ -506,7 +588,7 @@ export const AppShell: React.FC<Props> = ({ children }) => {
                 }`}
               >
                 <GraduationCap className="w-5 h-5 mb-0.5" />
-                <span>Schemes</span>
+                <span>Scholarships</span>
               </Link>
               <Link
                 to="/provider/applications"
