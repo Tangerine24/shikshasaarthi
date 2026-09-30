@@ -135,7 +135,6 @@ ShikshaSaarthi/
 │   └── vite.config.ts
 │
 ├── .github/workflows/        # Automated GitHub Actions (APK generation)
-├── DEPLOYMENT_GUIDE.md       # Step-by-step production setup (Render, Vercel, Docker)
 ├── Dockerfile                # Multi-stage container definition
 ├── docker-compose.yml        # Orchestrated local/staging deployment
 └── package.json              # Root workspace management
@@ -237,10 +236,22 @@ Pre-configured master accounts available upon running `npm run db:seed`:
 
 ## 🌐 Cloud Deployment
 
-Refer to [`DEPLOYMENT_GUIDE.md`](./DEPLOYMENT_GUIDE.md) for detailed blueprints:
-- **Render**: Full-stack deployment via root `render.yaml`
-- **Docker**: `docker-compose up --build`
-- **Vercel / Cloudflare**: Decoupled static frontend with remote Node.js API
+### 1. Render Blueprint (Recommended Single-Service)
+The repository includes a ready-to-use [`render.yaml`](./render.yaml) blueprint:
+1. Connect this GitHub repository in [Render Dashboard](https://dashboard.render.com).
+2. Create a **New + Blueprint** and choose this repository.
+3. Render automatically installs, builds both frontend and backend, and serves them under a single public URL.
+
+### 2. Docker & Containerized Hosting
+Deploy using the multi-stage [`Dockerfile`](./Dockerfile) and [`docker-compose.yml`](./docker-compose.yml):
+```bash
+docker-compose up --build -d
+```
+The application will be accessible at `http://localhost:5000`.
+
+### 3. Decoupled Static Hosting (Vercel / Cloudflare Pages)
+- **Frontend**: Deploy `frontend/` as a Vite app with root directory set to `frontend`.
+- **Backend**: Deploy `backend/` on Render or Railway with `DATABASE_URL` and `JWT_SECRET`. Set `VITE_API_URL` on the frontend pointing to the deployed backend.
 
 ---
 
