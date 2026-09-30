@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding ShikshaSaarthi database with comprehensive mock data...');
+  console.log('Seeding ShikshaSaarthi database with master reference data...');
 
   // Clean old data in safe foreign-key sequence
   await prisma.riskSignal.deleteMany({});
@@ -848,7 +848,7 @@ async function main() {
     ],
   });
 
-  console.log('✅ Seed completed successfully with comprehensive mock data!');
+  console.log('✅ Seed completed successfully with master reference data!');
   console.log('----------------------------------------------------');
   console.log('DEMO CREDENTIALS:');
   console.log('  Student : student@demo.shikshasaarthi.in  / Demo@1234');

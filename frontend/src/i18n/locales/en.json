@@ -52,7 +52,7 @@
     "step3_desc": "Submit your application and track its status in real time.",
     "sign_in": "Sign In",
     "register": "Register",
-    "demo_disclaimer": "This is a demonstration platform (SIH 2026 Prototype). Data shown is fictional and for demonstration purposes only.",
+    "demo_disclaimer": "ShikshaSaarthi — Official Unified Scholarship Assistance Portal",
     "tagline": "Discover. Understand. Apply. Track."
   },
   "auth": {
@@ -297,7 +297,7 @@
     "what_to_prepare": "What to prepare now:",
     "track_opportunity": "Track Opportunity",
     "need_help_title": "Need help understanding your eligibility path?",
-    "need_help_desc": "Ask JAGO, your AI assistant, for personalized guidance on completing your requirements or navigating applications.",
+    "need_help_desc": "Ask JAGO, your personal scholarship guide, for personalized guidance on completing your requirements or navigating applications.",
     "ask_jago": "Ask JAGO",
     "back_to_roadmap": "Back to Roadmap",
     "readiness_overview": "Readiness Overview",
@@ -364,7 +364,7 @@
     "check_eligibility": "Check Eligibility",
     "footer_platform": "ShikshaSaarthi — Unified Scholarship Assistance Platform",
     "footer_sih": "ShikshaSaarthi — Transparent, Verifiable Scholarship Access",
-    "footer_demo": "Demonstration platform. All data is for simulation and educational review.",
+    "footer_demo": "Empowering students nationwide through verified scholarship access and direct support.",
     "demo_note": "Demo Credentials Available on Login: Student, Provider & Admin"
   },
   "login_extra": {

@@ -22,10 +22,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Scratch & temporary testing files
-test_b64.txt
-verify_v2.py
-mobile/
 
 # Database & Uploads
 backend/uploads/*

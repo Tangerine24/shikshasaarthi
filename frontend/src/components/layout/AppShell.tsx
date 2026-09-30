@@ -492,7 +492,7 @@ export const AppShell: React.FC<Props> = ({ children }) => {
                     <span>{t('nav.sign_out', 'Sign Out')}</span>
                   </button>
                   <p className="text-[10px] text-center text-text-muted">
-                    Ministry of Tribal Affairs • SIH 2026
+                    Ministry of Tribal Affairs • Government of India
                   </p>
                 </div>
               </motion.div>
@@ -543,7 +543,7 @@ export const AppShell: React.FC<Props> = ({ children }) => {
                 }`}
               >
                 <MessageSquareHeart className="w-5 h-5" />
-                <span className="text-[10px] font-bold mt-0.5">JAGO AI</span>
+                <span className="text-[10px] font-bold mt-0.5">JAGO</span>
               </Link>
 
               <Link

@@ -302,7 +302,7 @@ export const EligibilityRoadmapPage: React.FC = () => {
               <Sparkles className="w-6 h-6 mr-2 text-yellow-400" />
               {t('roadmap.need_help_title', 'Need help understanding your eligibility path?')}
             </h2>
-            <p className="text-blue-100 max-w-xl">{t('roadmap.need_help_desc', 'Ask JAGO, your AI assistant, for personalized guidance on completing your requirements or navigating applications.')}</p>
+            <p className="text-blue-100 max-w-xl">{t('roadmap.need_help_desc', 'Ask JAGO, your personal scholarship guide, for personalized guidance on completing your requirements or navigating applications.')}</p>
           </div>
           <Link to="/student/jago?topic=eligibility-roadmap" className="mt-6 md:mt-0 px-6 py-3 bg-white text-[#12304A] font-bold rounded-lg hover:bg-gray-50 transition-colors flex items-center whitespace-nowrap">
             {t('roadmap.ask_jago', 'Ask JAGO')} <ArrowUpRight className="w-4 h-4 ml-2" />

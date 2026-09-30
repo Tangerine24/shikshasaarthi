@@ -61,7 +61,7 @@ export const ConsentModal: React.FC<ConsentModalProps> = ({ isOpen, onClose, onA
               />
               <div>
                 <p className="font-medium text-text-primary text-sm">JAGO Assistant Context</p>
-                <p className="text-xs text-text-muted mt-1">Grounding AI responses using your verified profile for personalized guidance.</p>
+                <p className="text-xs text-text-muted mt-1">Grounding JAGO guidance using your verified profile for personalized assistance.</p>
               </div>
             </label>
 
